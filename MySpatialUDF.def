@@ -1,0 +1,8 @@
+LIBRARY	MySpatialUDF
+VERSION		1.0
+EXPORTS
+
+	msudf_transform
+	msudf_transform_init
+	msudf_transform_deinit
+

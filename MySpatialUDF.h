@@ -38,6 +38,8 @@ MSUDF_API void msudf_transform_deinit(UDF_INIT *initid);
 MSUDF_API char *msudf_transform(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned long *length, char *is_null, char *error);
 
+GEOSCoordSeq msudf_transform_CoordSeq(const GEOSCoordSequence *seq,projPJ pj_src,projPJ pj_dst);
+
 #ifdef __cplusplus
 }
 #endif

@@ -38,6 +38,22 @@ MSUDF_API void msudf_transform_deinit(UDF_INIT *initid);
 MSUDF_API char *msudf_transform(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned long *length, char *is_null, char *error);
 
+MSUDF_API my_bool msudf_simplify_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_simplify_deinit(UDF_INIT *initid);
+MSUDF_API char *msudf_simplify(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error);
+
+MSUDF_API my_bool msudf_simplifyPreserveTopology_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_simplifyPreserveTopology_deinit(UDF_INIT *initid);
+MSUDF_API char *msudf_simplifyPreserveTopology(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error);
+
+MSUDF_API my_bool msudf_lineMerge_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_lineMerge_deinit(UDF_INIT *initid);
+MSUDF_API char *msudf_lineMerge(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error);
+
+
 GEOSCoordSeq msudf_transform_CoordSeq(const GEOSCoordSequence *seq,projPJ pj_src,projPJ pj_dst);
 
 #ifdef __cplusplus

@@ -5,4 +5,15 @@ EXPORTS
 	msudf_transform
 	msudf_transform_init
 	msudf_transform_deinit
+	
+	msudf_simplify
+	msudf_simplify_init
+	msudf_simplify_deinit
 
+	msudf_simplifyPreserveTopology
+	msudf_simplifyPreserveTopology_init
+	msudf_simplifyPreserveTopology_deinit
+
+	msudf_lineMerge
+	msudf_lineMerge_init
+	msudf_lineMerge_deinit

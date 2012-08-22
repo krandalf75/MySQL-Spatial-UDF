@@ -1,7 +1,7 @@
 
 use mysql;
 
-DROP TABLE spatial_ref_sys;
+DROP TABLE IF EXISTS spatial_ref_sys;
 
 CREATE TABLE spatial_ref_sys (
 srid INTEGER NOT NULL PRIMARY KEY,
@@ -3747,9 +3747,15 @@ insert into spatial_ref_sys (srid,auth_name,auth_srid,ref_sys_name,proj4text,srs
 
 /* UDF Functions and procedures */
 
-DROP FUNCTION IF EXISTS msudf_transform    ;
+DROP FUNCTION IF EXISTS msudf_transform;
+DROP FUNCTION IF EXISTS msudf_simplify;
+DROP FUNCTION IF EXISTS msudf_simplifyPreserveTopology;
 
-CREATE FUNCTION  msudf_transform    RETURNS STRING SONAME "MySpatialUDF.dll";
+
+CREATE FUNCTION  msudf_transform				RETURNS STRING SONAME "MySpatialUDF.dll";
+CREATE FUNCTION  msudf_simplify					RETURNS STRING SONAME "MySpatialUDF.dll";
+CREATE FUNCTION  msudf_simplifyPreserveTopology RETURNS STRING SONAME "MySpatialUDF.dll";
+CREATE FUNCTION  msudf_lineMerge				RETURNS STRING SONAME "MySpatialUDF.dll";
 
 /* SQL Functions and procedures */
 
@@ -3765,7 +3771,16 @@ END $$
 DELIMITER ;
 
 DROP FUNCTION IF EXISTS transform;
-CREATE FUNCTION transform(geom GEOMETRY,srid INTEGER) RETURNS blob return msudf_transform(geom,proj4text(SRID(geom)),srid,proj4text(srid));
+CREATE FUNCTION transform(geom GEOMETRY,srid INTEGER) RETURNS geometry return msudf_transform(geom,proj4text(SRID(geom)),srid,proj4text(srid));
+
+DROP FUNCTION IF EXISTS simplify;
+CREATE FUNCTION simplify(geom GEOMETRY,tolerance DOUBLE) RETURNS geometry return msudf_simplify(geom,tolerance);
+
+DROP FUNCTION IF EXISTS simplifyPreserveTopology;
+CREATE FUNCTION simplifyPreserveTopology(geom GEOMETRY,tolerance DOUBLE) RETURNS geometry return msudf_simplifyPreserveTopology(geom,tolerance);
+
+DROP FUNCTION IF EXISTS lineMerge;
+CREATE FUNCTION lineMerge(geom GEOMETRY) RETURNS geometry return msudf_lineMerge(geom);
 
 
 /* Some basic tests ... */

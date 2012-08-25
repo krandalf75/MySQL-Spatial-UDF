@@ -14,10 +14,6 @@ extern "C" {
 #include <string.h>
 #include <stdlib.h>
 
-#ifndef PI
-	#define PI       3.14159265358979323846
-#endif
-
 #if defined(_WIN32) || defined(_WIN64) || defined(__WIN32__) || defined(WIN32)
 	#ifdef MSUDF_EXPORTS
 	#define MSUDF_API __declspec(dllexport)
@@ -30,8 +26,6 @@ extern "C" {
 #endif
 
 #include <mysql.h>
-#include <proj_api.h>
-#include <geos_c.h>
 
 MSUDF_API my_bool msudf_transform_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
 MSUDF_API void msudf_transform_deinit(UDF_INIT *initid);
@@ -53,8 +47,11 @@ MSUDF_API void msudf_lineMerge_deinit(UDF_INIT *initid);
 MSUDF_API char *msudf_lineMerge(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned long *length, char *is_null, char *error);
 
+MSUDF_API my_bool msudf_reverse_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_reverse_deinit(UDF_INIT *initid);
+MSUDF_API char *msudf_reverse(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error);
 
-GEOSCoordSeq msudf_transform_CoordSeq(const GEOSCoordSequence *seq,projPJ pj_src,projPJ pj_dst);
 
 #ifdef __cplusplus
 }

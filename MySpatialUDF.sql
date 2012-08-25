@@ -3750,12 +3750,15 @@ insert into spatial_ref_sys (srid,auth_name,auth_srid,ref_sys_name,proj4text,srs
 DROP FUNCTION IF EXISTS msudf_transform;
 DROP FUNCTION IF EXISTS msudf_simplify;
 DROP FUNCTION IF EXISTS msudf_simplifyPreserveTopology;
+DROP FUNCTION IF EXISTS msudf_lineMerge;
+DROP FUNCTION IF EXISTS msudf_reverse;
 
 
 CREATE FUNCTION  msudf_transform				RETURNS STRING SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_simplify					RETURNS STRING SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_simplifyPreserveTopology RETURNS STRING SONAME "MySpatialUDF.dll";
-CREATE FUNCTION  msudf_lineMerge				RETURNS STRING SONAME "MySpatialUDF.dll";
+CREATE FUNCTION  msudf_lineMerge                RETURNS STRING SONAME "MySpatialUDF.dll";
+CREATE FUNCTION  msudf_reverse					RETURNS STRING SONAME "MySpatialUDF.dll";
 
 /* SQL Functions and procedures */
 
@@ -3769,6 +3772,26 @@ BEGIN
 	return myval;
 END $$
 DELIMITER ;
+
+
+
+DROP FUNCTION IF EXISTS ST_Transform;
+CREATE FUNCTION ST_Transform(geom GEOMETRY,srid INTEGER) RETURNS geometry return msudf_transform(geom,proj4text(SRID(geom)),srid,proj4text(srid));
+
+DROP FUNCTION IF EXISTS ST_Simplify;
+CREATE FUNCTION ST_Simplify(geom GEOMETRY,tolerance DOUBLE) RETURNS geometry return msudf_simplify(geom,tolerance);
+
+DROP FUNCTION IF EXISTS ST_SimplifyPreserveTopology;
+CREATE FUNCTION ST_SimplifyPreserveTopology(geom GEOMETRY,tolerance DOUBLE) RETURNS geometry return msudf_simplifyPreserveTopology(geom,tolerance);
+
+DROP FUNCTION IF EXISTS ST_LineMerge;
+CREATE FUNCTION ST_LineMerge(geom GEOMETRY) RETURNS geometry return msudf_lineMerge(geom);
+
+DROP FUNCTION IF EXISTS ST_Reverse;
+CREATE FUNCTION ST_Reverse(geom GEOMETRY) RETURNS geometry return msudf_reverse(geom);
+
+
+/* Deprecated functions */
 
 DROP FUNCTION IF EXISTS transform;
 CREATE FUNCTION transform(geom GEOMETRY,srid INTEGER) RETURNS geometry return msudf_transform(geom,proj4text(SRID(geom)),srid,proj4text(srid));
@@ -3800,3 +3823,23 @@ select CASE WHEN  astext(transform(geomfromtext('POINT (2.1699187 41.387917)',43
 select CASE WHEN  srid(transform(geomfromtext('POINT (2.1699187 41.387917)',4326),3395)) != 3395
 	THEN 'Test 4: Failed.' 
 	ELSE 'Test 4: OK.' END;
+
+select CASE WHEN  ST_LineMerge(geomfromtext('MULTILINESTRING((10 10, 15 15),(15 15, 30 30, 100 90))',4326)) != geomfromtext('LINESTRING(10 10,15 15,30 30,100 90)))',4326)
+	THEN 'Test 5: Failed.' 
+	ELSE 'Test 5: OK.' END;
+	
+select CASE WHEN  ST_Reverse(geomfromtext('POINT (2.1699187 41.387917)',4326)) != geomfromtext('POINT (2.1699187 41.387917)',4326)
+	THEN 'Test 6: Failed.' 
+	ELSE 'Test 6: OK.' END;
+
+select CASE WHEN  ST_Reverse(geomfromtext('LINESTRING(-4.21875 26.3671875, -1.7578125 32.6953125, 7.03125 24.2578125, -0.87890625 21.09375)',4326)) != geomfromtext('LINESTRING( -0.87890625 21.09375, 7.03125 24.2578125, -1.7578125 32.6953125, -4.21875 26.3671875)',4326)
+	THEN 'Test 7: Failed.' 
+	ELSE 'Test 7: OK.' END;
+
+select CASE WHEN  ST_Reverse(geomfromtext('MULTILINESTRING((10 10, 190 190),(15 15, 30 30, 100 90))',4326)) != geomfromtext('"MULTILINESTRING((190 190,10 10),(100 90,30 30,15 15))"',4326)
+	THEN 'Test 8: Failed.' 
+	ELSE 'Test 8: OK.' END;
+
+select CASE WHEN  ST_Reverse(geomfromtext('POLYGON((9.4482421875 31.4208984375, 7.20703125 26.982421875, 12.12890625 27.6416015625, 9.4482421875 31.4208984375))',4326)) != geomfromtext('POLYGON(( 9.4482421875 31.4208984375, 12.12890625 27.6416015625, 7.20703125 26.982421875, 9.4482421875 31.4208984375))',4326)
+	THEN 'Test 9: Failed.' 
+	ELSE 'Test 9: OK.' END;

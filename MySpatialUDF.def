@@ -17,3 +17,7 @@ EXPORTS
 	msudf_lineMerge
 	msudf_lineMerge_init
 	msudf_lineMerge_deinit
+
+	msudf_reverse
+	msudf_reverse_init
+	msudf_reverse_deinit

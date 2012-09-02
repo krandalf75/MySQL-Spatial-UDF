@@ -1,3 +1,6 @@
+
+#define MSUDF_INTERNAL 1
+
 #include "MySpatialUDF.h"
 #include "GeometryUtils.h"
 
@@ -8,6 +11,170 @@
 #else
 	#define DEBUG(...)
 #endif
+
+
+my_bool msudf_buffer_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
+{
+	DEBUG("msudf_buffer_init");
+
+	if (args->arg_count < 2 || args->arg_count > 3 ) {
+		strcpy(message,"Wrong # arguments");
+		return 1;
+	} else if (args->arg_type[0] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	} else if (args->arg_type[1] != REAL_RESULT) {
+		strcpy(message,"Wrong type on parameter #2");
+		return 1;
+	}
+
+	if (args->arg_count > 2 && args->arg_type[2] != INT_RESULT) {
+		strcpy(message,"Wrong type on parameter #3");
+		return 1;
+	};
+
+
+	DEBUG("msudf_buffer_init OK1");
+	initid->max_length= 0xFFFFFF;
+	initid->ptr = NULL;
+	DEBUG("msudf_buffer_init OK2");
+	return 0;
+
+}
+
+void msudf_buffer_deinit(UDF_INIT *initid)
+{
+	DEBUG("msudf_buffer_deinit");
+	if (initid->ptr != NULL) {
+		free(initid->ptr);
+		initid->ptr = NULL;
+	}
+	DEBUG("msudf_buffer_deinit OK");
+}
+
+char *msudf_buffer(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error)
+{
+	unsigned char *wkb;
+	size_t wkbsize;
+	GEOSGeom geom1,geom2;
+	double buffer;
+	int quadsegs;
+
+	DEBUG("msudf_buffer");
+
+	wkb = (unsigned char *) (args->args[0]);
+	geom1 = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	wkb = NULL;
+	buffer = *((double*) args->args[1]);
+	
+	if (geom1 == NULL) {
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return NULL;
+	}
+
+	if (args->arg_count > 2 && args->arg_type[2] == INT_RESULT) {
+		quadsegs = *((int *)args->args[2]);
+	} else {
+		quadsegs = 8;
+	}
+
+	geom2 = GEOSBuffer(geom1,buffer,quadsegs);
+	wkb = GEOSGeomToWKB_buf(geom2,&wkbsize);
+
+	if (geom1 != NULL) GEOSGeom_destroy(geom1);
+	if (geom2 != NULL) GEOSGeom_destroy(geom2);
+
+	if (wkb != NULL) {
+		*length = (long)wkbsize + 4;
+		if (initid->ptr != NULL) free(initid->ptr);
+		initid->ptr = (char *) malloc(*length);
+		memcpy(initid->ptr,args->args[0],4);
+		memcpy((char *)initid->ptr + 4,wkb,wkbsize);
+		GEOSFree((char *)wkb);
+		return initid->ptr;
+	} else {
+		*is_null = 1;
+		return NULL;
+	}
+}
+
+my_bool msudf_convexHull_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
+{
+	DEBUG("msudf_convexHull_init");
+
+	if (args->arg_count != 1) {
+		strcpy(message,"Wrong # arguments");
+		return 1;
+	} else if (args->arg_type[0] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	}
+
+	DEBUG("msudf_rconvexHull_init OK1");
+	initid->max_length= 0xFFFFFF;
+	initid->ptr = NULL;
+	initid->const_item = 0;
+	initid->decimals = 0;
+	initid->maybe_null = 1;
+	DEBUG("msudf_convexHull_init OK2");
+	return 0;
+
+}
+
+void msudf_convexHull_deinit(UDF_INIT *initid)
+{
+	DEBUG("msudf_convexHull_deinit");
+	if (initid->ptr != NULL) {
+		free(initid->ptr);
+		initid->ptr = NULL;
+	}
+	DEBUG("msudf_convexHull_deinit OK");
+}
+
+char *msudf_convexHull(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error)
+{
+	unsigned char *wkb;
+	size_t wkbsize;
+	GEOSGeom geom1,geom2;
+
+	DEBUG("msudf_convexHull");
+
+	wkb = (unsigned char *) (args->args[0]);
+	DEBUG("geom_length: %d",args->lengths[0]);
+	geom1 = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	wkb = NULL;
+	
+	if (geom1 == NULL) {
+		DEBUG("msudf_convexHull: Invalid geometry.");
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return NULL;
+	}
+
+	geom2 = GEOSConvexHull(geom1);
+	wkb = GEOSGeomToWKB_buf(geom2,&wkbsize);
+
+	if (geom1 != NULL) GEOSGeom_destroy(geom1);
+	if (geom2 != NULL) GEOSGeom_destroy(geom2);
+
+
+	if (wkb != NULL) {
+		*length = (long)wkbsize + 4;
+		if (initid->ptr != NULL) free(initid->ptr);
+		initid->ptr = (char *) malloc(*length);
+		memcpy(initid->ptr,args->args[0],4);
+		memcpy((char *)initid->ptr + 4,wkb,wkbsize);
+		GEOSFree((char *)wkb);
+		return initid->ptr;
+	} else {
+		*is_null = 1;
+		return NULL;
+	}
+}
+
 
 
 void msudf_debug(const char *fmt, ...) {
@@ -25,13 +192,191 @@ void msudf_debug(const char *fmt, ...) {
 		fclose(fd);
 }
 
+my_bool msudf_difference_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
+{
+	DEBUG("msudf_difference_init");
 
-typedef struct {
-	projPJ pj_src, pj_dst;
-	int srid_src, srid_dst;
-	char *buf;
-} transform_params;
+	if (args->arg_count != 2 ) {
+		strcpy(message,"Wrong # arguments");
+		return 1;
+	} else if (args->arg_type[0] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	} else if (args->arg_type[1] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #2");
+		return 1;
+	}
 
+	DEBUG("msudf_difference_init OK1");
+	initid->max_length= 0xFFFFFF;
+	initid->ptr = NULL;
+	DEBUG("msudf_difference_init OK2");
+	return 0;
+
+}
+
+void msudf_difference_deinit(UDF_INIT *initid)
+{
+	DEBUG("msudf_difference_deinit");
+	if (initid->ptr != NULL) {
+		free(initid->ptr);
+		initid->ptr = NULL;
+	}
+	DEBUG("msudf_difference_deinit OK");
+}
+
+char *msudf_difference(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error)
+{
+	unsigned char *wkb;
+	size_t wkbsize;
+	GEOSGeom geomFirst,geomSecond,geomResult;
+	int sridFirst,sridSecond
+		
+
+	DEBUG("msudf_difference");
+
+	wkb = (unsigned char *) (args->args[0]);
+	geomFirst = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	sridFirst = msduf_getInt(wkb);
+	wkb = NULL;
+	if (geomFirst == NULL) {
+		strcpy(error,"Invalid geometry on first parameter.");
+		*is_null = 1;
+		return NULL;
+	}
+
+	wkb = (unsigned char *) (args->args[1]);
+	geomSecond = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[1] - 4);
+	sridSecond = msduf_getInt(wkb);
+	wkb = NULL;
+	if (geomSecond == NULL) {
+		strcpy(error,"Invalid geometry on second parameter.");
+		*is_null = 1;
+		return NULL;
+	}
+
+	if (sridFirst != sridSecond) {
+		strcpy(error,"First and second geometry has different SRID.");
+		*is_null = 1;
+		return NULL;
+	}
+
+	geomResult = GEOSDifference(geomFirst,geomSecond);
+
+	
+	wkb = GEOSGeomToWKB_buf(geomResult,&wkbsize);
+	
+	if (geomFirst != NULL) GEOSGeom_destroy(geomFirst);
+	if (geomSecond != NULL) GEOSGeom_destroy(geomSecond);
+	if (geomResult != NULL) GEOSGeom_destroy(geomResult);
+
+	if (wkb != NULL) {
+		*length = (long)wkbsize + 4;
+		if (initid->ptr != NULL) free(initid->ptr);
+		initid->ptr = (char *) malloc(*length);
+		memcpy(initid->ptr,args->args[0],4);
+		memcpy((char *)initid->ptr + 4,wkb,wkbsize);
+		GEOSFree((char *)wkb);
+		return initid->ptr;
+	} else {
+		*is_null = 1;
+		return NULL;
+	}
+}
+
+my_bool msudf_intersection_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
+{
+	DEBUG("msudf_intersection_init");
+
+	if (args->arg_count != 2 ) {
+		strcpy(message,"Wrong # arguments");
+		return 1;
+	} else if (args->arg_type[0] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	} else if (args->arg_type[1] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #2");
+		return 1;
+	}
+
+	DEBUG("msudf_intersection_init OK1");
+	initid->max_length= 0xFFFFFF;
+	initid->ptr = NULL;
+	DEBUG("msudf_intersection_init OK2");
+	return 0;
+
+}
+
+void msudf_intersection_deinit(UDF_INIT *initid)
+{
+	DEBUG("msudf_intersection_deinit");
+	if (initid->ptr != NULL) {
+		free(initid->ptr);
+		initid->ptr = NULL;
+	}
+	DEBUG("msudf_intersection_deinit OK");
+}
+
+char *msudf_intersection(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error)
+{
+	unsigned char *wkb;
+	size_t wkbsize;
+	GEOSGeom geomFirst,geomSecond,geomResult;
+	int sridFirst,sridSecond
+		
+
+	DEBUG("msudf_intersection");
+
+	wkb = (unsigned char *) (args->args[0]);
+	geomFirst = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	sridFirst = msduf_getInt(wkb);
+	wkb = NULL;
+	if (geomFirst == NULL) {
+		strcpy(error,"Invalid geometry on first parameter.");
+		*is_null = 1;
+		return NULL;
+	}
+
+	wkb = (unsigned char *) (args->args[1]);
+	geomSecond = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[1] - 4);
+	sridSecond = msduf_getInt(wkb);
+	wkb = NULL;
+	if (geomSecond == NULL) {
+		strcpy(error,"Invalid geometry on second parameter.");
+		*is_null = 1;
+		return NULL;
+	}
+
+	if (sridFirst != sridSecond) {
+		strcpy(error,"First and second geometry has different SRID.");
+		*is_null = 1;
+		return NULL;
+	}
+
+	geomResult = GEOSIntersection(geomFirst,geomSecond);
+
+	
+	wkb = GEOSGeomToWKB_buf(geomResult,&wkbsize);
+	
+	if (geomFirst != NULL) GEOSGeom_destroy(geomFirst);
+	if (geomSecond != NULL) GEOSGeom_destroy(geomSecond);
+	if (geomResult != NULL) GEOSGeom_destroy(geomResult);
+
+	if (wkb != NULL) {
+		*length = (long)wkbsize + 4;
+		if (initid->ptr != NULL) free(initid->ptr);
+		initid->ptr = (char *) malloc(*length);
+		memcpy(initid->ptr,args->args[0],4);
+		memcpy((char *)initid->ptr + 4,wkb,wkbsize);
+		GEOSFree((char *)wkb);
+		return initid->ptr;
+	} else {
+		*is_null = 1;
+		return NULL;
+	}
+}
 
 
 my_bool msudf_transform_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
@@ -70,7 +415,7 @@ my_bool msudf_transform_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	return 0;
 }
 
-int getInt(const unsigned char *buf)
+int msduf_getInt(const unsigned char *buf)
 {
 	int result;
     unsigned char *p = (unsigned char *)&result;
@@ -100,7 +445,7 @@ char *msudf_transform(UDF_INIT *initid, UDF_ARGS *args, char *buf,
 	DEBUG("msudf_transform");
 	wkb = (unsigned char *) (args->args[0]);
 	g1 = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
-	srid_src = getInt(wkb);
+	srid_src = msduf_getInt(wkb);
 	wkb = NULL;
 
 	DEBUG("srid_src: %d",srid_src);
@@ -109,7 +454,7 @@ char *msudf_transform(UDF_INIT *initid, UDF_ARGS *args, char *buf,
 		params->srid_src = srid_src;
 	}
 
-	srid_dst = getInt((unsigned char *) args->args[2]);
+	srid_dst = msduf_getInt((unsigned char *) args->args[2]);
 	DEBUG("srid_dst: %d",srid_dst);
 	if ((params->pj_dst == NULL) || (params->srid_dst != srid_dst)) {
 		params->pj_dst = pj_init_plus(args->args[3]);
@@ -155,6 +500,99 @@ void msudf_transform_deinit(UDF_INIT *initid)
 		if (params->pj_dst != NULL) pj_free(params->pj_dst);
 		free(initid->ptr);
 		initid->ptr = NULL;
+	}
+}
+
+my_bool msudf_symDifference_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
+{
+	DEBUG("msudf_symDifference_init");
+
+	if (args->arg_count != 2 ) {
+		strcpy(message,"Wrong # arguments");
+		return 1;
+	} else if (args->arg_type[0] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	} else if (args->arg_type[1] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #2");
+		return 1;
+	}
+
+	DEBUG("msudf_symDifference_init OK1");
+	initid->max_length= 0xFFFFFF;
+	initid->ptr = NULL;
+	DEBUG("msudf_symDifference_init OK2");
+	return 0;
+
+}
+
+void msudf_symDifference_deinit(UDF_INIT *initid)
+{
+	DEBUG("msudf_symDifference_deinit");
+	if (initid->ptr != NULL) {
+		free(initid->ptr);
+		initid->ptr = NULL;
+	}
+	DEBUG("msudf_symDifference_deinit OK");
+}
+
+char *msudf_symDifference(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error)
+{
+	unsigned char *wkb;
+	size_t wkbsize;
+	GEOSGeom geomFirst,geomSecond,geomResult;
+	int sridFirst,sridSecond
+		
+
+	DEBUG("msudf_symDifference");
+
+	wkb = (unsigned char *) (args->args[0]);
+	geomFirst = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	sridFirst = msduf_getInt(wkb);
+	wkb = NULL;
+	if (geomFirst == NULL) {
+		strcpy(error,"Invalid geometry on first parameter.");
+		*is_null = 1;
+		return NULL;
+	}
+
+	wkb = (unsigned char *) (args->args[1]);
+	geomSecond = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[1] - 4);
+	sridSecond = msduf_getInt(wkb);
+	wkb = NULL;
+	if (geomSecond == NULL) {
+		strcpy(error,"Invalid geometry on second parameter.");
+		*is_null = 1;
+		return NULL;
+	}
+
+	if (sridFirst != sridSecond) {
+		strcpy(error,"First and second geometry has different SRID.");
+		*is_null = 1;
+		return NULL;
+	}
+
+	geomResult = GEOSSymDifference(geomFirst,geomSecond);
+
+	
+	wkb = GEOSGeomToWKB_buf(geomResult,&wkbsize);
+	
+	if (geomFirst != NULL) GEOSGeom_destroy(geomFirst);
+	if (geomSecond != NULL) GEOSGeom_destroy(geomSecond);
+	if (geomResult != NULL) GEOSGeom_destroy(geomResult);
+
+	if (wkb != NULL) {
+		*length = (long)wkbsize + 4;
+		if (initid->ptr != NULL) free(initid->ptr);
+		initid->ptr = (char *) malloc(*length);
+		memcpy(initid->ptr,args->args[0],4);
+		memcpy((char *)initid->ptr + 4,wkb,wkbsize);
+		GEOSFree((char *)wkb);
+		return initid->ptr;
+	} else {
+		*is_null = 1;
+		return NULL;
 	}
 }
 
@@ -388,7 +826,7 @@ char *msudf_lineMerge(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 
 my_bool msudf_reverse_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 {
-	DEBUG("msudf_reverse__init");
+	DEBUG("msudf_reverse_init");
 
 	if (args->arg_count != 1) {
 		strcpy(message,"Wrong # arguments");
@@ -446,6 +884,99 @@ char *msudf_reverse(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	if (geom1 != NULL) GEOSGeom_destroy(geom1);
 	if (geom2 != NULL) GEOSGeom_destroy(geom2);
 
+
+	if (wkb != NULL) {
+		*length = (long)wkbsize + 4;
+		if (initid->ptr != NULL) free(initid->ptr);
+		initid->ptr = (char *) malloc(*length);
+		memcpy(initid->ptr,args->args[0],4);
+		memcpy((char *)initid->ptr + 4,wkb,wkbsize);
+		GEOSFree((char *)wkb);
+		return initid->ptr;
+	} else {
+		*is_null = 1;
+		return NULL;
+	}
+}
+
+my_bool msudf_union_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
+{
+	DEBUG("msudf_union_init");
+
+	if (args->arg_count != 2 ) {
+		strcpy(message,"Wrong # arguments");
+		return 1;
+	} else if (args->arg_type[0] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	} else if (args->arg_type[1] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #2");
+		return 1;
+	}
+
+	DEBUG("msudf_union_init OK1");
+	initid->max_length= 0xFFFFFF;
+	initid->ptr = NULL;
+	DEBUG("msudf_union_init OK2");
+	return 0;
+
+}
+
+void msudf_union_deinit(UDF_INIT *initid)
+{
+	DEBUG("msudf_union_deinit");
+	if (initid->ptr != NULL) {
+		free(initid->ptr);
+		initid->ptr = NULL;
+	}
+	DEBUG("msudf_union_deinit OK");
+}
+
+char *msudf_union(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error)
+{
+	unsigned char *wkb;
+	size_t wkbsize;
+	GEOSGeom geomFirst,geomSecond,geomResult;
+	int sridFirst,sridSecond
+		
+
+	DEBUG("msudf_union");
+
+	wkb = (unsigned char *) (args->args[0]);
+	geomFirst = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	sridFirst = msduf_getInt(wkb);
+	wkb = NULL;
+	if (geomFirst == NULL) {
+		strcpy(error,"Invalid geometry on first parameter.");
+		*is_null = 1;
+		return NULL;
+	}
+
+	wkb = (unsigned char *) (args->args[1]);
+	geomSecond = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[1] - 4);
+	sridSecond = msduf_getInt(wkb);
+	wkb = NULL;
+	if (geomSecond == NULL) {
+		strcpy(error,"Invalid geometry on second parameter.");
+		*is_null = 1;
+		return NULL;
+	}
+
+	if (sridFirst != sridSecond) {
+		strcpy(error,"First and second geometry has different SRID.");
+		*is_null = 1;
+		return NULL;
+	}
+
+	geomResult = GEOSUnion(geomFirst,geomSecond);
+
+	
+	wkb = GEOSGeomToWKB_buf(geomResult,&wkbsize);
+	
+	if (geomFirst != NULL) GEOSGeom_destroy(geomFirst);
+	if (geomSecond != NULL) GEOSGeom_destroy(geomSecond);
+	if (geomResult != NULL) GEOSGeom_destroy(geomResult);
 
 	if (wkb != NULL) {
 		*length = (long)wkbsize + 4;

@@ -27,19 +27,24 @@ extern "C" {
 
 #include <mysql.h>
 
-MSUDF_API my_bool msudf_transform_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
-MSUDF_API void msudf_transform_deinit(UDF_INIT *initid);
-MSUDF_API char *msudf_transform(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+MSUDF_API my_bool msudf_buffer_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_buffer_deinit(UDF_INIT *initid);
+MSUDF_API char *msudf_buffer(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned long *length, char *is_null, char *error);
 
-MSUDF_API my_bool msudf_simplify_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
-MSUDF_API void msudf_simplify_deinit(UDF_INIT *initid);
-MSUDF_API char *msudf_simplify(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+MSUDF_API my_bool msudf_convexHull_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_convexHull_deinit(UDF_INIT *initid);
+MSUDF_API char *msudf_convexHull(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned long *length, char *is_null, char *error);
 
-MSUDF_API my_bool msudf_simplifyPreserveTopology_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
-MSUDF_API void msudf_simplifyPreserveTopology_deinit(UDF_INIT *initid);
-MSUDF_API char *msudf_simplifyPreserveTopology(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+MSUDF_API my_bool msudf_difference_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_difference_deinit(UDF_INIT *initid);
+MSUDF_API char *msudf_difference(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error);
+
+MSUDF_API my_bool msudf_intersection_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_intersection_deinit(UDF_INIT *initid);
+MSUDF_API char *msudf_intersection(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned long *length, char *is_null, char *error);
 
 MSUDF_API my_bool msudf_lineMerge_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
@@ -52,7 +57,46 @@ MSUDF_API void msudf_reverse_deinit(UDF_INIT *initid);
 MSUDF_API char *msudf_reverse(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned long *length, char *is_null, char *error);
 
+MSUDF_API my_bool msudf_symDifference_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_symDifference_deinit(UDF_INIT *initid);
+MSUDF_API char *msudf_symDifference(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error);
+
+MSUDF_API my_bool msudf_simplify_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_simplify_deinit(UDF_INIT *initid);
+MSUDF_API char *msudf_simplify(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error);
+
+MSUDF_API my_bool msudf_simplifyPreserveTopology_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_simplifyPreserveTopology_deinit(UDF_INIT *initid);
+MSUDF_API char *msudf_simplifyPreserveTopology(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error);
+
+MSUDF_API my_bool msudf_transform_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_transform_deinit(UDF_INIT *initid);
+MSUDF_API char *msudf_transform(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error);
+
+MSUDF_API my_bool msudf_union_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_union_deinit(UDF_INIT *initid);
+MSUDF_API char *msudf_union(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error);
 
 #ifdef __cplusplus
 }
+#endif
+
+#ifdef MSUDF_INTERNAL
+
+	#include <proj_api.h>
+	#include <geos_c.h>
+
+	typedef struct {
+		projPJ pj_src, pj_dst;
+		int srid_src, srid_dst;
+		char *buf;
+	} transform_params;
+
+	int msduf_getInt(const unsigned char *buf);
+
 #endif

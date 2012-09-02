@@ -3746,19 +3746,31 @@ insert into spatial_ref_sys (srid,auth_name,auth_srid,ref_sys_name,proj4text,srs
 insert into spatial_ref_sys (srid,auth_name,auth_srid,ref_sys_name,proj4text,srs_wkt) values ('32766','epsg','32766','WGS 84 / TM 36 SE','+proj=tmerc +lat_0=0 +lon_0=36 +k=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +no_defs','PROJCS["WGS 84 / TM 36 SE",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]],UNIT["metre",1,AUTHORITY["EPSG","9001"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",36],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",10000000],AUTHORITY["EPSG","32766"],AXIS["Easting",EAST],AXIS["Northing",NORTH]]');
 
 /* UDF Functions and procedures */
-
-DROP FUNCTION IF EXISTS msudf_transform;
-DROP FUNCTION IF EXISTS msudf_simplify;
-DROP FUNCTION IF EXISTS msudf_simplifyPreserveTopology;
+DROP FUNCTION IF EXISTS msudf_buffer;
+DROP FUNCTION IF EXISTS msudf_convexHull;
+DROP FUNCTION IF EXISTS msudf_difference;
+DROP FUNCTION IF EXISTS msudf_intersection;
 DROP FUNCTION IF EXISTS msudf_lineMerge;
 DROP FUNCTION IF EXISTS msudf_reverse;
+DROP FUNCTION IF EXISTS msudf_simplify;
+DROP FUNCTION IF EXISTS msudf_simplifyPreserveTopology;
+DROP FUNCTION IF EXISTS msudf_symDifference;
+DROP FUNCTION IF EXISTS msudf_transform;
+DROP FUNCTION IF EXISTS msudf_union;
 
-
-CREATE FUNCTION  msudf_transform				RETURNS STRING SONAME "MySpatialUDF.dll";
-CREATE FUNCTION  msudf_simplify					RETURNS STRING SONAME "MySpatialUDF.dll";
-CREATE FUNCTION  msudf_simplifyPreserveTopology RETURNS STRING SONAME "MySpatialUDF.dll";
-CREATE FUNCTION  msudf_lineMerge                RETURNS STRING SONAME "MySpatialUDF.dll";
+CREATE FUNCTION  msudf_buffer					RETURNS STRING SONAME "MySpatialUDF.dll";
+CREATE FUNCTION  msudf_convexHull				RETURNS STRING SONAME "MySpatialUDF.dll";
+CREATE FUNCTION  msudf_difference				RETURNS STRING SONAME "MySpatialUDF.dll";
+CREATE FUNCTION  msudf_intersection				RETURNS STRING SONAME "MySpatialUDF.dll";
+CREATE FUNCTION  msudf_lineMerge				RETURNS STRING SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_reverse					RETURNS STRING SONAME "MySpatialUDF.dll";
+CREATE FUNCTION  msudf_simplify					RETURNS STRING SONAME "MySpatialUDF.dll";
+CREATE FUNCTION  msudf_simplifyPreserveTopology	RETURNS STRING SONAME "MySpatialUDF.dll";
+CREATE FUNCTION  msudf_symDifference			RETURNS STRING SONAME "MySpatialUDF.dll";
+CREATE FUNCTION  msudf_transform				RETURNS STRING SONAME "MySpatialUDF.dll";
+CREATE FUNCTION  msudf_union					RETURNS STRING SONAME "MySpatialUDF.dll";
+
+
 
 /* SQL Functions and procedures */
 
@@ -3774,9 +3786,23 @@ END $$
 DELIMITER ;
 
 
+DROP FUNCTION IF EXISTS ST_Buffer;
+CREATE FUNCTION ST_Buffer(geom GEOMETRY,width DOUBLE) RETURNS geometry return msudf_buffer(geom,width);
 
-DROP FUNCTION IF EXISTS ST_Transform;
-CREATE FUNCTION ST_Transform(geom GEOMETRY,srid INTEGER) RETURNS geometry return msudf_transform(geom,proj4text(SRID(geom)),srid,proj4text(srid));
+DROP FUNCTION IF EXISTS ST_ConvexHull;
+CREATE FUNCTION ST_ConvexHull(geom GEOMETRY) RETURNS geometry return msudf_convexHull(geom);
+
+DROP FUNCTION IF EXISTS ST_Difference;
+CREATE FUNCTION ST_Difference(geom1 GEOMETRY,geom2 GEOMETRY) RETURNS geometry return msudf_difference(geom1,geom2);
+
+DROP FUNCTION IF EXISTS ST_Intersection;
+CREATE FUNCTION ST_Intersection(geom1 GEOMETRY,geom2 GEOMETRY) RETURNS geometry return msudf_intersection(geom1,geom2);
+
+DROP FUNCTION IF EXISTS ST_LineMerge;
+CREATE FUNCTION ST_LineMerge(geom GEOMETRY) RETURNS geometry return msudf_lineMerge(geom);
+
+DROP FUNCTION IF EXISTS ST_Reverse;
+CREATE FUNCTION ST_Reverse(geom GEOMETRY) RETURNS geometry return msudf_reverse(geom);
 
 DROP FUNCTION IF EXISTS ST_Simplify;
 CREATE FUNCTION ST_Simplify(geom GEOMETRY,tolerance DOUBLE) RETURNS geometry return msudf_simplify(geom,tolerance);
@@ -3784,11 +3810,14 @@ CREATE FUNCTION ST_Simplify(geom GEOMETRY,tolerance DOUBLE) RETURNS geometry ret
 DROP FUNCTION IF EXISTS ST_SimplifyPreserveTopology;
 CREATE FUNCTION ST_SimplifyPreserveTopology(geom GEOMETRY,tolerance DOUBLE) RETURNS geometry return msudf_simplifyPreserveTopology(geom,tolerance);
 
-DROP FUNCTION IF EXISTS ST_LineMerge;
-CREATE FUNCTION ST_LineMerge(geom GEOMETRY) RETURNS geometry return msudf_lineMerge(geom);
+DROP FUNCTION IF EXISTS ST_SymDifference;
+CREATE FUNCTION ST_SymDifference(geom1 GEOMETRY,geom2 GEOMETRY) RETURNS geometry return msudf_symDifference(geom1,geom2);
 
-DROP FUNCTION IF EXISTS ST_Reverse;
-CREATE FUNCTION ST_Reverse(geom GEOMETRY) RETURNS geometry return msudf_reverse(geom);
+DROP FUNCTION IF EXISTS ST_Transform;
+CREATE FUNCTION ST_Transform(geom GEOMETRY,srid INTEGER) RETURNS geometry return msudf_transform(geom,proj4text(SRID(geom)),srid,proj4text(srid));
+
+DROP FUNCTION IF EXISTS ST_Union;
+CREATE FUNCTION ST_Union(geom1 GEOMETRY,geom2 GEOMETRY) RETURNS geometry return msudf_union(geom1,geom2);
 
 
 /* Deprecated functions */
@@ -3843,3 +3872,15 @@ select CASE WHEN  ST_Reverse(geomfromtext('MULTILINESTRING((10 10, 190 190),(15 
 select CASE WHEN  ST_Reverse(geomfromtext('POLYGON((9.4482421875 31.4208984375, 7.20703125 26.982421875, 12.12890625 27.6416015625, 9.4482421875 31.4208984375))',4326)) != geomfromtext('POLYGON(( 9.4482421875 31.4208984375, 12.12890625 27.6416015625, 7.20703125 26.982421875, 9.4482421875 31.4208984375))',4326)
 	THEN 'Test 9: Failed.' 
 	ELSE 'Test 9: OK.' END;
+
+select CASE WHEN  ST_Union(geomfromtext('POINT( 2 2) ',4326),geomfromtext('POINT(2 2)',4326)) != geomfromtext('POINT(2 2)',4326)
+	THEN 'Test 10: Failed.' 
+	ELSE 'Test 10: OK.' END;
+
+select CASE WHEN  ST_Union(geomfromtext('POINT( 2 2) ',4326),geomfromtext('POINT(2 4)',4326)) != geomfromtext('MULTIPOINT(2 2,2 4)',4326)
+	THEN 'Test 11: Failed.' 
+	ELSE 'Test 11: OK.' END;
+
+select CASE WHEN  ST_Buffer(geomfromtext('POINT( 2 2) ',4326),2) != geomfromtext('MULTIPOINT(2 2,2 4)',4326)
+	THEN 'Test 12: Failed.' 
+	ELSE 'Test 12: OK.' END;

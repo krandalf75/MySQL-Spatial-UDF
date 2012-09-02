@@ -2,17 +2,21 @@ LIBRARY	MySpatialUDF
 VERSION		1.0
 EXPORTS
 
-	msudf_transform
-	msudf_transform_init
-	msudf_transform_deinit
-	
-	msudf_simplify
-	msudf_simplify_init
-	msudf_simplify_deinit
+	msudf_buffer
+	msudf_buffer_init
+	msudf_buffer_deinit
 
-	msudf_simplifyPreserveTopology
-	msudf_simplifyPreserveTopology_init
-	msudf_simplifyPreserveTopology_deinit
+	msudf_convexHull
+	msudf_convexHull_init
+	msudf_convexHull_deinit
+
+	msudf_difference
+	msudf_difference_init
+	msudf_difference_deinit
+
+	msudf_intersection
+	msudf_intersection_init
+	msudf_intersection_deinit
 
 	msudf_lineMerge
 	msudf_lineMerge_init
@@ -21,3 +25,23 @@ EXPORTS
 	msudf_reverse
 	msudf_reverse_init
 	msudf_reverse_deinit
+
+	msudf_symDifference
+	msudf_symDifference_init
+	msudf_symDifference_deinit
+
+	msudf_simplify
+	msudf_simplify_init
+	msudf_simplify_deinit
+
+	msudf_simplifyPreserveTopology
+	msudf_simplifyPreserveTopology_init
+	msudf_simplifyPreserveTopology_deinit
+
+	msudf_transform
+	msudf_transform_init
+	msudf_transform_deinit
+	
+	msudf_union
+	msudf_union_init
+	msudf_union_deinit

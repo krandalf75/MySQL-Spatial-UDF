@@ -3751,6 +3751,7 @@ DROP FUNCTION IF EXISTS msudf_convexHull;
 DROP FUNCTION IF EXISTS msudf_difference;
 DROP FUNCTION IF EXISTS msudf_intersection;
 DROP FUNCTION IF EXISTS msudf_lineMerge;
+DROP FUNCTION IF EXISTS msudf_lineSubstring;
 DROP FUNCTION IF EXISTS msudf_reverse;
 DROP FUNCTION IF EXISTS msudf_simplify;
 DROP FUNCTION IF EXISTS msudf_simplifyPreserveTopology;
@@ -3763,6 +3764,7 @@ CREATE FUNCTION  msudf_convexHull				RETURNS STRING SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_difference				RETURNS STRING SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_intersection				RETURNS STRING SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_lineMerge				RETURNS STRING SONAME "MySpatialUDF.dll";
+CREATE FUNCTION  msudf_lineSubstring			RETURNS STRING SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_reverse					RETURNS STRING SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_simplify					RETURNS STRING SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_simplifyPreserveTopology	RETURNS STRING SONAME "MySpatialUDF.dll";
@@ -3800,6 +3802,9 @@ CREATE FUNCTION ST_Intersection(geom1 GEOMETRY,geom2 GEOMETRY) RETURNS geometry 
 
 DROP FUNCTION IF EXISTS ST_LineMerge;
 CREATE FUNCTION ST_LineMerge(geom GEOMETRY) RETURNS geometry return msudf_lineMerge(geom);
+
+DROP FUNCTION IF EXISTS ST_LineSubstring;
+CREATE FUNCTION ST_LineSubstring(geom GEOMETRY, start DOUBLE, finish DOUBLE) RETURNS geometry return msudf_lineSubstring(geom,start,finish);
 
 DROP FUNCTION IF EXISTS ST_Reverse;
 CREATE FUNCTION ST_Reverse(geom GEOMETRY) RETURNS geometry return msudf_reverse(geom);

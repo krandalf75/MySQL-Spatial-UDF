@@ -5,9 +5,9 @@
 #include "GeometryUtils.h"
 
 
-// #define ENABLE_DEBUG
+ #define ENABLE_DEBUG
 #ifdef ENABLE_DEBUG
-	#define DEBUG(...) msudf_debug(__VA_ARGS__);
+	#define DEBUG(...) gu_debug(__VA_ARGS__);
 #else
 	#define DEBUG(...)
 #endif
@@ -231,7 +231,7 @@ char *msudf_difference(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned char *wkb;
 	size_t wkbsize;
 	GEOSGeom geomFirst,geomSecond,geomResult;
-	int sridFirst,sridSecond
+	int sridFirst,sridSecond;
 		
 
 	DEBUG("msudf_difference");
@@ -324,7 +324,7 @@ char *msudf_intersection(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned char *wkb;
 	size_t wkbsize;
 	GEOSGeom geomFirst,geomSecond,geomResult;
-	int sridFirst,sridSecond
+	int sridFirst,sridSecond;
 		
 
 	DEBUG("msudf_intersection");
@@ -542,7 +542,7 @@ char *msudf_symDifference(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned char *wkb;
 	size_t wkbsize;
 	GEOSGeom geomFirst,geomSecond,geomResult;
-	int sridFirst,sridSecond
+	int sridFirst,sridSecond;
 		
 
 	DEBUG("msudf_symDifference");
@@ -824,6 +824,94 @@ char *msudf_lineMerge(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	}
 }
 
+my_bool msudf_lineSubstring_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
+{
+	DEBUG("msudf_lineSubstring_init");
+
+	if (args->arg_count != 3) {
+		strcpy(message,"Wrong # arguments");
+		return 1;
+	} else if (args->arg_type[0] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	} else if (args->arg_type[1] != REAL_RESULT) {
+		strcpy(message,"Wrong type on parameter #2");
+		return 1;
+	} else if (args->arg_type[2] != REAL_RESULT) {
+		strcpy(message,"Wrong type on parameter #3");
+		return 1;
+	}
+
+	DEBUG("msudf_lineSubstring_init OK1");
+	initid->max_length= 0xFFFFFF;
+	initid->ptr = NULL;
+	initid->const_item = 0;
+	initid->decimals = 0;
+	initid->maybe_null = 1;
+	DEBUG("msudf_lineSubstring_init OK2");
+	return 0;
+
+}
+
+void msudf_lineSubstring_deinit(UDF_INIT *initid)
+{
+	DEBUG("msudf_lineSubstring_deinit");
+	if (initid->ptr != NULL) {
+		free(initid->ptr);
+		initid->ptr = NULL;
+	}
+	DEBUG("msudf_lineSubstring_deinit OK");
+}
+
+
+char *msudf_lineSubstring(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error)
+{
+	unsigned char *wkb;
+	size_t wkbsize;
+	GEOSGeom geom1,geom2;
+	double start,end;
+
+	DEBUG("msudf_lineSubstring");
+
+	wkb = (unsigned char *) (args->args[0]);
+	DEBUG("geom_length: %d",args->lengths[0]);
+	geom1 = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	wkb = NULL;
+	
+	if (geom1 == NULL) {
+		DEBUG("msudf_lineMerge: Invalid geometry.");
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return NULL;
+	}
+
+	start = *((double*) args->args[1]);
+	end = *((double*) args->args[2]);
+
+	geom2 = gu_substringLineGeom(geom1,start,end);
+	if (geom2 != NULL) {
+		wkb = GEOSGeomToWKB_buf(geom2,&wkbsize);
+	}
+
+	if (geom1 != NULL) GEOSGeom_destroy(geom1);
+	if (geom2 != NULL) GEOSGeom_destroy(geom2);
+
+
+	if (wkb != NULL) {
+		*length = (long)wkbsize + 4;
+		if (initid->ptr != NULL) free(initid->ptr);
+		initid->ptr = (char *) malloc(*length);
+		memcpy(initid->ptr,args->args[0],4);
+		memcpy((char *)initid->ptr + 4,wkb,wkbsize);
+		GEOSFree((char *)wkb);
+		return initid->ptr;
+	} else {
+		*is_null = 1;
+		return NULL;
+	}
+}
+
 my_bool msudf_reverse_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 {
 	DEBUG("msudf_reverse_init");
@@ -938,7 +1026,7 @@ char *msudf_union(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned char *wkb;
 	size_t wkbsize;
 	GEOSGeom geomFirst,geomSecond,geomResult;
-	int sridFirst,sridSecond
+	int sridFirst,sridSecond;
 		
 
 	DEBUG("msudf_union");

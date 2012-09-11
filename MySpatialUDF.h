@@ -52,6 +52,11 @@ MSUDF_API void msudf_lineMerge_deinit(UDF_INIT *initid);
 MSUDF_API char *msudf_lineMerge(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned long *length, char *is_null, char *error);
 
+MSUDF_API my_bool msudf_lineSubstring_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_lineSubstring_deinit(UDF_INIT *initid);
+MSUDF_API char *msudf_lineSubstring(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error);
+
 MSUDF_API my_bool msudf_reverse_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
 MSUDF_API void msudf_reverse_deinit(UDF_INIT *initid);
 MSUDF_API char *msudf_reverse(UDF_INIT *initid,UDF_ARGS *args, char *buf,

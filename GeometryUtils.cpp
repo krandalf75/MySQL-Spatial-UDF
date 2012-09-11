@@ -67,7 +67,7 @@ GEOSGeom gu_transformGeom(const GEOSGeom geom,projPJ pj_src,projPJ pj_dst)
 	GEOSGeom g2ext = NULL;
 	GEOSGeom *geomArray = NULL;
 
-	DEBUG("msudf_transform_Geom");
+	DEBUG("gu_transformGeom");
 	geomType = GEOSGeomTypeId(geom);
 
 	switch (geomType) {
@@ -141,6 +141,9 @@ GEOSCoordSeq gu_reverseCoordSeq(const GEOSCoordSequence *seq)
 	return seqResult;
 }
 
+
+
+
 GEOSGeom gu_reverseGeom(const GEOSGeom geom)
 {
 	int geomType;
@@ -198,3 +201,127 @@ GEOSGeom gu_reverseGeom(const GEOSGeom geom)
 
 	return geomResult;
 }
+
+
+GEOSCoordSeq gu_substringCoordSeq(const GEOSCoordSequence *seq, double dstart, double dend)
+{	
+	unsigned int numCoords,dimCoords,i,j,curCoord;
+	double ox,oy,fx,fy,dx,dy,px,py,distance0,distance1,value;
+	GEOSCoordSequence *seqAux;
+	GEOSCoordSequence *seqResult;
+	int in = 0;
+
+
+	GEOSCoordSeq_getSize(seq,&numCoords);
+	DEBUG("gu_substringCoordSeq numCoords: %d",numCoords);
+	GEOSCoordSeq_getDimensions(seq,&dimCoords);
+	DEBUG("gu_substringCoordSeq dimCoords: %d",dimCoords);
+	seqAux = GEOSCoordSeq_clone(seq);
+	DEBUG("gu_substringCoordSeq OK0");
+	if (numCoords > 1) {
+		i=1;
+		distance0 = 0;
+		distance1 = 0;
+		curCoord =0;
+		GEOSCoordSeq_getX(seq,0,&fx);
+		GEOSCoordSeq_getY(seq,0,&fy);
+
+		do {
+			ox = fx;
+			oy = fy;
+			distance0 = distance1;
+			GEOSCoordSeq_getX(seq,i,&fx);
+			GEOSCoordSeq_getY(seq,i,&fy);
+			dx = fx - ox;
+			dy = fy - oy;
+			distance1 += sqrt(dx * dx + dy * dy);
+			i++;
+		} while ((distance1 < dstart) && (i < numCoords));
+
+		// Add start point
+		px = ox +  dx * (dstart - distance0) / (distance1 - distance0);
+		py = oy +  dy * (dstart - distance0) / (distance1 - distance0);
+		GEOSCoordSeq_setX(seqAux,curCoord, px);
+		GEOSCoordSeq_setY(seqAux,curCoord, py);
+		curCoord++;
+
+	
+		while ((distance1 < dend) && (i < numCoords)) {
+			DEBUG("gu_substringCoordSeq in %f,%f",fx,fy);
+			if ( px != fx ||py != fy) {
+				GEOSCoordSeq_setX(seqAux,curCoord,fx);
+				GEOSCoordSeq_setY(seqAux,curCoord,fy);
+				curCoord++;
+				px = fx;
+				py = fy;
+			}
+			ox = fx;
+			oy = fy;
+			distance0 = distance1;
+			GEOSCoordSeq_getX(seq,i,&fx);
+			GEOSCoordSeq_getY(seq,i,&fy);
+			dx = fx - ox;
+			dy = fy - oy;
+			distance1 += sqrt(dx * dx + dy * dy);
+			i++;
+		}
+
+		DEBUG("FIN: gu_substringCoordSeq in %d distance %f",i,distance1);
+
+		// Add end point
+		if (dstart != dend) {
+			px = ox +  dx * (dend- distance0) / (distance1 - distance0);
+			py = oy +  dy * (dend- distance0) / (distance1 - distance0);
+			GEOSCoordSeq_setX(seqAux,curCoord, px);
+			GEOSCoordSeq_setY(seqAux,curCoord, py);
+			curCoord++;
+		}
+		DEBUG("gu_substringCoordSeq done!!");
+	} else {
+		curCoord = 1;
+	}
+
+	seqResult = GEOSCoordSeq_create(curCoord,dimCoords);
+	for (i=0; i< curCoord; i++) {
+		for (j=0; j<dimCoords;j++) {
+			GEOSCoordSeq_getOrdinate(seqAux,i,j,&value);
+			GEOSCoordSeq_setOrdinate(seqResult,i,j,value);
+		}
+	}
+
+	GEOSCoordSeq_destroy(seqAux);
+
+	return seqResult;				
+}
+
+GEOSGeom gu_substringLineGeom(const GEOSGeom geom,double start,double end)
+{
+	int geomType;
+	GEOSGeom geomResult;
+	double distance,dstart,dend;
+	GEOSCoordSequence* cs;
+	unsigned int numCoords;
+
+	geomType = GEOSGeomTypeId(geom);
+
+	switch (geomType) {
+		case GEOS_LINESTRING:
+			GEOSLength(geom,&distance);
+			DEBUG("gu_substringLineGeom distance %f",distance);
+			dstart = distance * start;
+			dend = distance * end;
+			cs = gu_substringCoordSeq(GEOSGeom_getCoordSeq(geom),dstart,dend);
+			GEOSCoordSeq_getSize(cs,&numCoords);
+			if (numCoords > 1) {
+				geomResult = GEOSGeom_createLineString(cs);
+			} else {
+				geomResult = GEOSGeom_createPoint(cs);
+			}
+			break;
+		default:
+			geomResult = NULL;
+	}
+
+	return geomResult;
+}
+

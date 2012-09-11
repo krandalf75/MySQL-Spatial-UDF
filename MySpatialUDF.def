@@ -22,6 +22,10 @@ EXPORTS
 	msudf_lineMerge_init
 	msudf_lineMerge_deinit
 
+	msudf_lineSubstring
+	msudf_lineSubstring_init
+	msudf_lineSubstring_deinit
+
 	msudf_reverse
 	msudf_reverse_init
 	msudf_reverse_deinit

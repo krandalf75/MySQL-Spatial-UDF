@@ -27,9 +27,19 @@ extern "C" {
 
 #include <mysql.h>
 
+MSUDF_API my_bool msudf_boundary_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_boundary_deinit(UDF_INIT *initid);
+MSUDF_API char *msudf_boundary(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error);
+
 MSUDF_API my_bool msudf_buffer_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
 MSUDF_API void msudf_buffer_deinit(UDF_INIT *initid);
 MSUDF_API char *msudf_buffer(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error);
+
+MSUDF_API my_bool msudf_centroid_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_centroid_deinit(UDF_INIT *initid);
+MSUDF_API char *msudf_centroid(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned long *length, char *is_null, char *error);
 
 MSUDF_API my_bool msudf_convexHull_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
@@ -46,6 +56,14 @@ MSUDF_API my_bool msudf_intersection_init(UDF_INIT *initid,UDF_ARGS *args,char *
 MSUDF_API void msudf_intersection_deinit(UDF_INIT *initid);
 MSUDF_API char *msudf_intersection(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned long *length, char *is_null, char *error);
+
+MSUDF_API my_bool msudf_isSimple_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_isSimple_deinit(UDF_INIT *initid);
+MSUDF_API long long msudf_isSimple(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error);
+
+MSUDF_API my_bool msudf_isRing_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_isRing_deinit(UDF_INIT *initid);
+MSUDF_API long long msudf_isRing(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error);
 
 MSUDF_API my_bool msudf_lineMerge_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
 MSUDF_API void msudf_lineMerge_deinit(UDF_INIT *initid);

@@ -2,9 +2,17 @@ LIBRARY	MySpatialUDF
 VERSION		1.0
 EXPORTS
 
+	msudf_boundary
+	msudf_boundary_init
+	msudf_boundary_deinit
+
 	msudf_buffer
 	msudf_buffer_init
 	msudf_buffer_deinit
+
+	msudf_centroid
+	msudf_centroid_init
+	msudf_centroid_deinit
 
 	msudf_convexHull
 	msudf_convexHull_init
@@ -25,6 +33,14 @@ EXPORTS
 	msudf_lineSubstring
 	msudf_lineSubstring_init
 	msudf_lineSubstring_deinit
+
+	msudf_isSimple
+	msudf_isSimple_init
+	msudf_isSimple_deinit
+
+	msudf_isRing
+	msudf_isRing_init
+	msudf_isRing_deinit
 
 	msudf_reverse
 	msudf_reverse_init

@@ -12,6 +12,78 @@
 	#define DEBUG(...)
 #endif
 
+my_bool msudf_boundary_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
+{
+	DEBUG("msudf_boundary_init");
+
+	if (args->arg_count != 1) {
+		strcpy(message,"Wrong # arguments");
+		return 1;
+	} else if (args->arg_type[0] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	} 
+
+	DEBUG("msudf_boundary_init OK1");
+	initid->max_length= 0xFFFFFF;
+	initid->ptr = NULL;
+	DEBUG("msudf_boundary_init OK2");
+	return 0;
+
+}
+
+void msudf_boundary_deinit(UDF_INIT *initid)
+{
+	DEBUG("msudf_boundary_deinit");
+	if (initid->ptr != NULL) {
+		free(initid->ptr);
+		initid->ptr = NULL;
+	}
+	DEBUG("msudf_boundary_deinit OK");
+}
+
+char *msudf_boundary(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error)
+{
+	unsigned char *wkb;
+	size_t wkbsize;
+	GEOSGeom geom1,geom2;
+
+	DEBUG("msudf_boundary");
+
+	wkb = (unsigned char *) (args->args[0]);
+	geom1 = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	wkb = NULL;
+	
+	if (geom1 == NULL) {
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return NULL;
+	}
+
+	geom2 = GEOSBoundary(geom1);
+	if (geom2 != NULL) {
+		wkb = GEOSGeomToWKB_buf(geom2,&wkbsize);
+	}
+
+	if (geom1 != NULL) GEOSGeom_destroy(geom1);
+	if (geom2 != NULL) GEOSGeom_destroy(geom2);
+
+	if (wkb != NULL) {
+		*length = (long)wkbsize + 4;
+		if (initid->ptr != NULL) free(initid->ptr);
+		initid->ptr = (char *) malloc(*length);
+		memcpy(initid->ptr,args->args[0],4);
+		memcpy((char *)initid->ptr + 4,wkb,wkbsize);
+		GEOSFree((char *)wkb);
+		return initid->ptr;
+	} else {
+		*is_null = 1;
+		return NULL;
+	}
+}
+
+
 
 my_bool msudf_buffer_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 {
@@ -99,6 +171,78 @@ char *msudf_buffer(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 		return NULL;
 	}
 }
+
+my_bool msudf_centroid_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
+{
+	DEBUG("msudf_centroid_init");
+
+	if (args->arg_count != 1) {
+		strcpy(message,"Wrong # arguments");
+		return 1;
+	} else if (args->arg_type[0] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	} 
+
+	DEBUG("msudf_centroid_init OK1");
+	initid->max_length= 0xFFFFFF;
+	initid->ptr = NULL;
+	DEBUG("msudf_centroid_init OK2");
+	return 0;
+
+}
+
+void msudf_centroid_deinit(UDF_INIT *initid)
+{
+	DEBUG("msudf_centroid_deinit");
+	if (initid->ptr != NULL) {
+		free(initid->ptr);
+		initid->ptr = NULL;
+	}
+	DEBUG("msudf_centroid_deinit OK");
+}
+
+char *msudf_centroid(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error)
+{
+	unsigned char *wkb;
+	size_t wkbsize;
+	GEOSGeom geom1,geom2;
+
+	DEBUG("msudf_centroid");
+
+	wkb = (unsigned char *) (args->args[0]);
+	geom1 = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	wkb = NULL;
+	
+	if (geom1 == NULL) {
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return NULL;
+	}
+
+	geom2 = GEOSGetCentroid(geom1);
+	if (geom2 != NULL) {
+		wkb = GEOSGeomToWKB_buf(geom2,&wkbsize);
+	}
+
+	if (geom1 != NULL) GEOSGeom_destroy(geom1);
+	if (geom2 != NULL) GEOSGeom_destroy(geom2);
+
+	if (wkb != NULL) {
+		*length = (long)wkbsize + 4;
+		if (initid->ptr != NULL) free(initid->ptr);
+		initid->ptr = (char *) malloc(*length);
+		memcpy(initid->ptr,args->args[0],4);
+		memcpy((char *)initid->ptr + 4,wkb,wkbsize);
+		GEOSFree((char *)wkb);
+		return initid->ptr;
+	} else {
+		*is_null = 1;
+		return NULL;
+	}
+}
+
 
 my_bool msudf_convexHull_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 {
@@ -378,6 +522,105 @@ char *msudf_intersection(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	}
 }
 
+my_bool msudf_isSimple_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
+{
+	DEBUG("msudf_isSimple_init");
+
+	if (args->arg_count != 1) {
+		strcpy(message,"Wrong # arguments");
+		return 1;
+	} else if (args->arg_type[0] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	} 
+
+	return 0;
+
+}
+
+void msudf_isSimple_deinit(UDF_INIT *initid)
+{
+
+}
+
+long long msudf_isSimple(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error)
+{
+	unsigned char *wkb;
+	GEOSGeom geom;
+	long long result;
+
+	DEBUG("msudf_isSimple");
+
+	wkb = (unsigned char *) (args->args[0]);
+	geom = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	wkb = NULL;
+	
+	if (geom == NULL) {
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return NULL;
+	}
+
+	result = GEOSisSimple(geom);
+	if (geom != NULL) GEOSGeom_destroy(geom);
+
+	if (result >1) {
+		*is_null = 1;
+		return NULL;
+	} else {
+		return result;
+	}
+}
+
+my_bool msudf_isRing_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
+{
+	DEBUG("msudf_isRing_init");
+
+	if (args->arg_count != 1) {
+		strcpy(message,"Wrong # arguments");
+		return 1;
+	} else if (args->arg_type[0] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	} 
+
+	return 0;
+
+}
+
+void msudf_isRing_deinit(UDF_INIT *initid)
+{
+
+}
+
+long long msudf_isRing(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error)
+{
+	unsigned char *wkb;
+	GEOSGeom geom;
+	long long result;
+
+	DEBUG("msudf_isRing");
+
+	wkb = (unsigned char *) (args->args[0]);
+	geom = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	wkb = NULL;
+	
+	if (geom == NULL) {
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return NULL;
+	}
+
+	result = GEOSisRing(geom);
+	if (geom != NULL) GEOSGeom_destroy(geom);
+
+	if (result >1) {
+		*is_null = 1;
+		return NULL;
+	} else {
+		return result;
+	}
+}
 
 my_bool msudf_transform_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 {

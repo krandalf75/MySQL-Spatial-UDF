@@ -3746,10 +3746,14 @@ insert into spatial_ref_sys (srid,auth_name,auth_srid,ref_sys_name,proj4text,srs
 insert into spatial_ref_sys (srid,auth_name,auth_srid,ref_sys_name,proj4text,srs_wkt) values ('32766','epsg','32766','WGS 84 / TM 36 SE','+proj=tmerc +lat_0=0 +lon_0=36 +k=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +no_defs','PROJCS["WGS 84 / TM 36 SE",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]],UNIT["metre",1,AUTHORITY["EPSG","9001"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",36],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",10000000],AUTHORITY["EPSG","32766"],AXIS["Easting",EAST],AXIS["Northing",NORTH]]');
 
 /* UDF Functions and procedures */
+DROP FUNCTION IF EXISTS msudf_boundary;
 DROP FUNCTION IF EXISTS msudf_buffer;
+DROP FUNCTION IF EXISTS msudf_centroid;
 DROP FUNCTION IF EXISTS msudf_convexHull;
 DROP FUNCTION IF EXISTS msudf_difference;
 DROP FUNCTION IF EXISTS msudf_intersection;
+DROP FUNCTION IF EXISTS msudf_isSimple;
+DROP FUNCTION IF EXISTS msudf_isRing;
 DROP FUNCTION IF EXISTS msudf_lineMerge;
 DROP FUNCTION IF EXISTS msudf_lineSubstring;
 DROP FUNCTION IF EXISTS msudf_reverse;
@@ -3759,10 +3763,14 @@ DROP FUNCTION IF EXISTS msudf_symDifference;
 DROP FUNCTION IF EXISTS msudf_transform;
 DROP FUNCTION IF EXISTS msudf_union;
 
+CREATE FUNCTION  msudf_boundary					RETURNS STRING SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_buffer					RETURNS STRING SONAME "MySpatialUDF.dll";
+CREATE FUNCTION  msudf_centroid					RETURNS STRING SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_convexHull				RETURNS STRING SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_difference				RETURNS STRING SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_intersection				RETURNS STRING SONAME "MySpatialUDF.dll";
+CREATE FUNCTION  msudf_isSimple					RETURNS INTEGER SONAME "MySpatialUDF.dll";
+CREATE FUNCTION  msudf_isRing					RETURNS INTEGER SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_lineMerge				RETURNS STRING SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_lineSubstring			RETURNS STRING SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_reverse					RETURNS STRING SONAME "MySpatialUDF.dll";
@@ -3787,9 +3795,14 @@ BEGIN
 END $$
 DELIMITER ;
 
+DROP FUNCTION IF EXISTS ST_Boundary;
+CREATE FUNCTION ST_Boundary(geom GEOMETRY) RETURNS geometry return msudf_boundary(geom);
 
 DROP FUNCTION IF EXISTS ST_Buffer;
 CREATE FUNCTION ST_Buffer(geom GEOMETRY,width DOUBLE) RETURNS geometry return msudf_buffer(geom,width);
+
+DROP FUNCTION IF EXISTS ST_Centroid;
+CREATE FUNCTION ST_Centroid(geom GEOMETRY) RETURNS geometry return msudf_centroid(geom);
 
 DROP FUNCTION IF EXISTS ST_ConvexHull;
 CREATE FUNCTION ST_ConvexHull(geom GEOMETRY) RETURNS geometry return msudf_convexHull(geom);

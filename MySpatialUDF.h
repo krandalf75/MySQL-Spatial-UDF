@@ -57,6 +57,10 @@ MSUDF_API void msudf_intersection_deinit(UDF_INIT *initid);
 MSUDF_API char *msudf_intersection(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned long *length, char *is_null, char *error);
 
+MSUDF_API my_bool msudf_isEmpty_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_isEmpty_deinit(UDF_INIT *initid);
+MSUDF_API long long msudf_isEmpty(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error);
+
 MSUDF_API my_bool msudf_isSimple_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
 MSUDF_API void msudf_isSimple_deinit(UDF_INIT *initid);
 MSUDF_API long long msudf_isSimple(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error);
@@ -64,6 +68,10 @@ MSUDF_API long long msudf_isSimple(UDF_INIT *initid,UDF_ARGS *args,char *is_null
 MSUDF_API my_bool msudf_isRing_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
 MSUDF_API void msudf_isRing_deinit(UDF_INIT *initid);
 MSUDF_API long long msudf_isRing(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error);
+
+MSUDF_API my_bool msudf_isValid_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_isValid_deinit(UDF_INIT *initid);
+MSUDF_API long long msudf_isValid(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error);
 
 MSUDF_API my_bool msudf_lineMerge_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
 MSUDF_API void msudf_lineMerge_deinit(UDF_INIT *initid);
@@ -73,6 +81,11 @@ MSUDF_API char *msudf_lineMerge(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 MSUDF_API my_bool msudf_lineSubstring_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
 MSUDF_API void msudf_lineSubstring_deinit(UDF_INIT *initid);
 MSUDF_API char *msudf_lineSubstring(UDF_INIT *initid,UDF_ARGS *args, char *buf,
+	unsigned long *length, char *is_null, char *error);
+
+MSUDF_API my_bool msudf_pointOnSurface_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_pointOnSurface_deinit(UDF_INIT *initid);
+MSUDF_API char *msudf_pointOnSurface(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned long *length, char *is_null, char *error);
 
 MSUDF_API my_bool msudf_reverse_init(UDF_INIT *initid,UDF_ARGS *args,char *message);

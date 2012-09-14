@@ -26,13 +26,9 @@ EXPORTS
 	msudf_intersection_init
 	msudf_intersection_deinit
 
-	msudf_lineMerge
-	msudf_lineMerge_init
-	msudf_lineMerge_deinit
-
-	msudf_lineSubstring
-	msudf_lineSubstring_init
-	msudf_lineSubstring_deinit
+	msudf_isEmpty
+	msudf_isEmpty_init
+	msudf_isEmpty_deinit
 
 	msudf_isSimple
 	msudf_isSimple_init
@@ -41,6 +37,22 @@ EXPORTS
 	msudf_isRing
 	msudf_isRing_init
 	msudf_isRing_deinit
+
+	msudf_isValid
+	msudf_isValid_init
+	msudf_isValid_deinit
+	
+	msudf_lineMerge
+	msudf_lineMerge_init
+	msudf_lineMerge_deinit
+
+	msudf_lineSubstring
+	msudf_lineSubstring_init
+	msudf_lineSubstring_deinit
+
+	msudf_pointOnSurface
+	msudf_pointOnSurface_init
+	msudf_pointOnSurface_deinit
 
 	msudf_reverse
 	msudf_reverse_init

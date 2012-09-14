@@ -3752,10 +3752,12 @@ DROP FUNCTION IF EXISTS msudf_centroid;
 DROP FUNCTION IF EXISTS msudf_convexHull;
 DROP FUNCTION IF EXISTS msudf_difference;
 DROP FUNCTION IF EXISTS msudf_intersection;
+DROP FUNCTION IF EXISTS msudf_isEmpty;
 DROP FUNCTION IF EXISTS msudf_isSimple;
 DROP FUNCTION IF EXISTS msudf_isRing;
 DROP FUNCTION IF EXISTS msudf_lineMerge;
 DROP FUNCTION IF EXISTS msudf_lineSubstring;
+DROP FUNCTION IF EXISTS msudf_pointOnSurface;
 DROP FUNCTION IF EXISTS msudf_reverse;
 DROP FUNCTION IF EXISTS msudf_simplify;
 DROP FUNCTION IF EXISTS msudf_simplifyPreserveTopology;
@@ -3769,10 +3771,12 @@ CREATE FUNCTION  msudf_centroid					RETURNS STRING SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_convexHull				RETURNS STRING SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_difference				RETURNS STRING SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_intersection				RETURNS STRING SONAME "MySpatialUDF.dll";
+CREATE FUNCTION  msudf_isEmpty					RETURNS INTEGER SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_isSimple					RETURNS INTEGER SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_isRing					RETURNS INTEGER SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_lineMerge				RETURNS STRING SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_lineSubstring			RETURNS STRING SONAME "MySpatialUDF.dll";
+CREATE FUNCTION  msudf_pointOnSurface			RETURNS STRING SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_reverse					RETURNS STRING SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_simplify					RETURNS STRING SONAME "MySpatialUDF.dll";
 CREATE FUNCTION  msudf_simplifyPreserveTopology	RETURNS STRING SONAME "MySpatialUDF.dll";
@@ -3813,11 +3817,26 @@ CREATE FUNCTION ST_Difference(geom1 GEOMETRY,geom2 GEOMETRY) RETURNS geometry re
 DROP FUNCTION IF EXISTS ST_Intersection;
 CREATE FUNCTION ST_Intersection(geom1 GEOMETRY,geom2 GEOMETRY) RETURNS geometry return msudf_intersection(geom1,geom2);
 
+DROP FUNCTION IF EXISTS ST_IsEmpty;
+CREATE FUNCTION ST_IsEmpty(geom1 GEOMETRY) RETURNS integer return msudf_isEmpty(geom1);
+
+DROP FUNCTION IF EXISTS ST_IsSimple;
+CREATE FUNCTION ST_IsSimple(geom1 GEOMETRY) RETURNS integer return msudf_isSimple(geom1);
+
+DROP FUNCTION IF EXISTS ST_IsRing;
+CREATE FUNCTION ST_IsRing(geom1 GEOMETRY) RETURNS integer return msudf_isRing(geom1);
+
+DROP FUNCTION IF EXISTS ST_IsValid;
+CREATE FUNCTION ST_IsValid(geom1 GEOMETRY) RETURNS integer return msudf_isValid(geom1);
+
 DROP FUNCTION IF EXISTS ST_LineMerge;
 CREATE FUNCTION ST_LineMerge(geom GEOMETRY) RETURNS geometry return msudf_lineMerge(geom);
 
 DROP FUNCTION IF EXISTS ST_LineSubstring;
 CREATE FUNCTION ST_LineSubstring(geom GEOMETRY, start DOUBLE, finish DOUBLE) RETURNS geometry return msudf_lineSubstring(geom,start,finish);
+
+DROP FUNCTION IF EXISTS ST_PointOnSurface;
+CREATE FUNCTION ST_PointOnSurface(geom GEOMETRY) RETURNS geometry return msudf_pointOnSurface(geom);
 
 DROP FUNCTION IF EXISTS ST_Reverse;
 CREATE FUNCTION ST_Reverse(geom GEOMETRY) RETURNS geometry return msudf_reverse(geom);

@@ -77,3 +77,32 @@ EXPORTS
 	msudf_union
 	msudf_union_init
 	msudf_union_deinit
+
+	msudf_disjoint
+	msudf_disjoint_init
+	msudf_disjoint_deinit
+
+	msudf_touches
+	msudf_touches_init
+	msudf_touches_deinit
+
+	msudf_intersects
+	msudf_intersects_init
+	msudf_intersects_deinit
+
+	msudf_crosses
+	msudf_crosses_init
+	msudf_crosses_deinit
+
+	msudf_within
+	msudf_within_init
+	msudf_within_deinit
+
+	msudf_contains
+	msudf_contains_init
+	msudf_contains_deinit
+
+	msudf_overlaps
+	msudf_overlaps_init
+	msudf_overlaps_deinit
+

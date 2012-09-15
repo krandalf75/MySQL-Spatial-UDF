@@ -243,6 +243,69 @@ char *msudf_centroid(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	}
 }
 
+my_bool msudf_contains_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
+{
+	DEBUG("msudf_contains_init");
+
+	if (args->arg_count != 2) {
+		strcpy(message,"Wrong # arguments");
+		return 1;
+	} else if (args->arg_type[0] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	} else if (args->arg_type[1] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	}
+	return 0;
+
+}
+
+void msudf_contains_deinit(UDF_INIT *initid)
+{
+
+}
+
+long long msudf_contains(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error)
+{
+	unsigned char *wkb;
+	GEOSGeom geom1,geom2;
+	long long result;
+
+	DEBUG("msudf_contains");
+
+	wkb = (unsigned char *) (args->args[0]);
+	geom1 = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	wkb = NULL;
+	
+	if (geom1 == NULL) {
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return NULL;
+	}
+	
+	wkb = (unsigned char *) (args->args[1]);
+	geom2 = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	wkb = NULL;
+	
+	if (geom2 == NULL) {
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return NULL;
+	}
+		
+	result = GEOSContains(geom1,geom2);
+	if (geom1 != NULL) GEOSGeom_destroy(geom1);
+	if (geom2 != NULL) GEOSGeom_destroy(geom2);
+	
+	if (result >1) {
+		*is_null = 1;
+		return NULL;
+	} else {
+		return result;
+	}
+}
+
 
 my_bool msudf_convexHull_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 {
@@ -316,6 +379,69 @@ char *msudf_convexHull(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	} else {
 		*is_null = 1;
 		return NULL;
+	}
+}
+
+my_bool msudf_crosses_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
+{
+	DEBUG("msudf_crosses_init");
+
+	if (args->arg_count != 2) {
+		strcpy(message,"Wrong # arguments");
+		return 1;
+	} else if (args->arg_type[0] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	} else if (args->arg_type[1] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	}
+	return 0;
+
+}
+
+void msudf_crosses_deinit(UDF_INIT *initid)
+{
+
+}
+
+long long msudf_crosses(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error)
+{
+	unsigned char *wkb;
+	GEOSGeom geom1,geom2;
+	long long result;
+
+	DEBUG("msudf_crosses");
+
+	wkb = (unsigned char *) (args->args[0]);
+	geom1 = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	wkb = NULL;
+	
+	if (geom1 == NULL) {
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return NULL;
+	}
+	
+	wkb = (unsigned char *) (args->args[1]);
+	geom2 = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	wkb = NULL;
+	
+	if (geom2 == NULL) {
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return NULL;
+	}
+		
+	result = GEOSCrosses(geom1,geom2);
+	if (geom1 != NULL) GEOSGeom_destroy(geom1);
+	if (geom2 != NULL) GEOSGeom_destroy(geom2);
+	
+	if (result >1) {
+		*is_null = 1;
+		return NULL;
+	} else {
+		return result;
 	}
 }
 
@@ -429,6 +555,69 @@ char *msudf_difference(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	}
 }
 
+my_bool msudf_disjoint_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
+{
+	DEBUG("msudf_disjoint_init");
+
+	if (args->arg_count != 2) {
+		strcpy(message,"Wrong # arguments");
+		return 1;
+	} else if (args->arg_type[0] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	} else if (args->arg_type[1] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	}
+	return 0;
+
+}
+
+void msudf_disjoint_deinit(UDF_INIT *initid)
+{
+
+}
+
+long long msudf_disjoint(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error)
+{
+	unsigned char *wkb;
+	GEOSGeom geom1,geom2;
+	long long result;
+
+	DEBUG("msudf_disjoint");
+
+	wkb = (unsigned char *) (args->args[0]);
+	geom1 = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	wkb = NULL;
+	
+	if (geom1 == NULL) {
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return NULL;
+	}
+	
+	wkb = (unsigned char *) (args->args[1]);
+	geom2 = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	wkb = NULL;
+	
+	if (geom2 == NULL) {
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return NULL;
+	}
+		
+	result = GEOSDisjoint(geom1,geom2);
+	if (geom1 != NULL) GEOSGeom_destroy(geom1);
+	if (geom2 != NULL) GEOSGeom_destroy(geom2);
+	
+	if (result >1) {
+		*is_null = 1;
+		return NULL;
+	} else {
+		return result;
+	}
+}
+
 my_bool msudf_intersection_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 {
 	DEBUG("msudf_intersection_init");
@@ -521,6 +710,71 @@ char *msudf_intersection(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 		return NULL;
 	}
 }
+
+my_bool msudf_intersects_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
+{
+	DEBUG("msudf_intersects_init");
+
+	if (args->arg_count != 2) {
+		strcpy(message,"Wrong # arguments");
+		return 1;
+	} else if (args->arg_type[0] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	} else if (args->arg_type[1] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	}
+	return 0;
+
+}
+
+void msudf_intersects_deinit(UDF_INIT *initid)
+{
+
+}
+
+long long msudf_intersects(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error)
+{
+	unsigned char *wkb;
+	GEOSGeom geom1,geom2;
+	long long result;
+
+	DEBUG("msudf_intersects");
+
+	wkb = (unsigned char *) (args->args[0]);
+	geom1 = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	wkb = NULL;
+	
+	if (geom1 == NULL) {
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return NULL;
+	}
+	
+	wkb = (unsigned char *) (args->args[1]);
+	geom2 = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	wkb = NULL;
+	
+	if (geom2 == NULL) {
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return NULL;
+	}
+		
+	result = GEOSIntersects(geom1,geom2);
+	if (geom1 != NULL) GEOSGeom_destroy(geom1);
+	if (geom2 != NULL) GEOSGeom_destroy(geom2);
+	
+	if (result >1) {
+		*is_null = 1;
+		return NULL;
+	} else {
+		return result;
+	}
+}
+
+
 
 my_bool msudf_isEmpty_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 {
@@ -722,6 +976,133 @@ long long msudf_isValid(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *err
 		return result;
 	}
 }
+
+my_bool msudf_overlaps_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
+{
+	DEBUG("msudf_overlaps_init");
+
+	if (args->arg_count != 2) {
+		strcpy(message,"Wrong # arguments");
+		return 1;
+	} else if (args->arg_type[0] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	} else if (args->arg_type[1] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	}
+	return 0;
+
+}
+
+void msudf_overlaps_deinit(UDF_INIT *initid)
+{
+
+}
+
+long long msudf_overlaps(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error)
+{
+	unsigned char *wkb;
+	GEOSGeom geom1,geom2;
+	long long result;
+
+	DEBUG("msudf_overlaps");
+
+	wkb = (unsigned char *) (args->args[0]);
+	geom1 = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	wkb = NULL;
+	
+	if (geom1 == NULL) {
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return NULL;
+	}
+	
+	wkb = (unsigned char *) (args->args[1]);
+	geom2 = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	wkb = NULL;
+	
+	if (geom2 == NULL) {
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return NULL;
+	}
+		
+	result = GEOSOverlaps(geom1,geom2);
+	if (geom1 != NULL) GEOSGeom_destroy(geom1);
+	if (geom2 != NULL) GEOSGeom_destroy(geom2);
+	
+	if (result >1) {
+		*is_null = 1;
+		return NULL;
+	} else {
+		return result;
+	}
+}
+
+my_bool msudf_touches_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
+{
+	DEBUG("msudf_touches_init");
+
+	if (args->arg_count != 2) {
+		strcpy(message,"Wrong # arguments");
+		return 1;
+	} else if (args->arg_type[0] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	} else if (args->arg_type[1] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	}
+	return 0;
+
+}
+
+void msudf_touches_deinit(UDF_INIT *initid)
+{
+
+}
+
+long long msudf_touches(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error)
+{
+	unsigned char *wkb;
+	GEOSGeom geom1,geom2;
+	long long result;
+
+	DEBUG("msudf_touches");
+
+	wkb = (unsigned char *) (args->args[0]);
+	geom1 = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	wkb = NULL;
+	
+	if (geom1 == NULL) {
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return NULL;
+	}
+	
+	wkb = (unsigned char *) (args->args[1]);
+	geom2 = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	wkb = NULL;
+	
+	if (geom2 == NULL) {
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return NULL;
+	}
+		
+	result = GEOSTouches(geom1,geom2);
+	if (geom1 != NULL) GEOSGeom_destroy(geom1);
+	if (geom2 != NULL) GEOSGeom_destroy(geom2);
+	
+	if (result >1) {
+		*is_null = 1;
+		return NULL;
+	} else {
+		return result;
+	}
+}
+
 
 my_bool msudf_transform_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 {
@@ -1499,5 +1880,70 @@ char *msudf_union(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 		return NULL;
 	}
 }
+
+my_bool msudf_within_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
+{
+	DEBUG("msudf_within_init");
+
+	if (args->arg_count != 2) {
+		strcpy(message,"Wrong # arguments");
+		return 1;
+	} else if (args->arg_type[0] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	} else if (args->arg_type[1] != STRING_RESULT) {
+		strcpy(message,"Wrong type on parameter #1");
+		return 1;
+	}
+	return 0;
+
+}
+
+void msudf_within_deinit(UDF_INIT *initid)
+{
+
+}
+
+long long msudf_within(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error)
+{
+	unsigned char *wkb;
+	GEOSGeom geom1,geom2;
+	long long result;
+
+	DEBUG("msudf_within");
+
+	wkb = (unsigned char *) (args->args[0]);
+	geom1 = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	wkb = NULL;
+	
+	if (geom1 == NULL) {
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return NULL;
+	}
+	
+	wkb = (unsigned char *) (args->args[1]);
+	geom2 = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
+	wkb = NULL;
+	
+	if (geom2 == NULL) {
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return NULL;
+	}
+		
+	result = GEOSWithin(geom1,geom2);
+	if (geom1 != NULL) GEOSGeom_destroy(geom1);
+	if (geom2 != NULL) GEOSGeom_destroy(geom2);
+	
+	if (result >1) {
+		*is_null = 1;
+		return NULL;
+	} else {
+		return result;
+	}
+}
+
+
 
 

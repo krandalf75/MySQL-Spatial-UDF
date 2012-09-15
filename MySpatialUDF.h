@@ -42,15 +42,31 @@ MSUDF_API void msudf_centroid_deinit(UDF_INIT *initid);
 MSUDF_API char *msudf_centroid(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned long *length, char *is_null, char *error);
 
+MSUDF_API my_bool msudf_contains_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_contains_deinit(UDF_INIT *initid);
+MSUDF_API long long msudf_contains(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error);
+
 MSUDF_API my_bool msudf_convexHull_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
 MSUDF_API void msudf_convexHull_deinit(UDF_INIT *initid);
 MSUDF_API char *msudf_convexHull(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned long *length, char *is_null, char *error);
 
+MSUDF_API my_bool msudf_crosses_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_crosses_deinit(UDF_INIT *initid);
+MSUDF_API long long msudf_crosses(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error);
+
 MSUDF_API my_bool msudf_difference_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
 MSUDF_API void msudf_difference_deinit(UDF_INIT *initid);
 MSUDF_API char *msudf_difference(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned long *length, char *is_null, char *error);
+
+MSUDF_API my_bool msudf_disjoint_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_disjoint_deinit(UDF_INIT *initid);
+MSUDF_API long long msudf_disjoint(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error);
+
+MSUDF_API my_bool msudf_intersects_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_intersects_deinit(UDF_INIT *initid);
+MSUDF_API long long msudf_intersects(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error);
 
 MSUDF_API my_bool msudf_intersection_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
 MSUDF_API void msudf_intersection_deinit(UDF_INIT *initid);
@@ -83,6 +99,10 @@ MSUDF_API void msudf_lineSubstring_deinit(UDF_INIT *initid);
 MSUDF_API char *msudf_lineSubstring(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned long *length, char *is_null, char *error);
 
+MSUDF_API my_bool msudf_overlaps_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_overlaps_deinit(UDF_INIT *initid);
+MSUDF_API long long msudf_overlaps(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error);
+
 MSUDF_API my_bool msudf_pointOnSurface_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
 MSUDF_API void msudf_pointOnSurface_deinit(UDF_INIT *initid);
 MSUDF_API char *msudf_pointOnSurface(UDF_INIT *initid,UDF_ARGS *args, char *buf,
@@ -108,6 +128,10 @@ MSUDF_API void msudf_simplifyPreserveTopology_deinit(UDF_INIT *initid);
 MSUDF_API char *msudf_simplifyPreserveTopology(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned long *length, char *is_null, char *error);
 
+MSUDF_API my_bool msudf_touches_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_touches_deinit(UDF_INIT *initid);
+MSUDF_API long long msudf_touches(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error);
+
 MSUDF_API my_bool msudf_transform_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
 MSUDF_API void msudf_transform_deinit(UDF_INIT *initid);
 MSUDF_API char *msudf_transform(UDF_INIT *initid,UDF_ARGS *args, char *buf,
@@ -117,6 +141,14 @@ MSUDF_API my_bool msudf_union_init(UDF_INIT *initid,UDF_ARGS *args,char *message
 MSUDF_API void msudf_union_deinit(UDF_INIT *initid);
 MSUDF_API char *msudf_union(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned long *length, char *is_null, char *error);
+
+MSUDF_API my_bool msudf_within_init(UDF_INIT *initid,UDF_ARGS *args,char *message);
+MSUDF_API void msudf_within_deinit(UDF_INIT *initid);
+MSUDF_API long long msudf_within(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error);
+
+
+
+
 
 #ifdef __cplusplus
 }

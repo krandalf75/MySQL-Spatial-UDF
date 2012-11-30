@@ -49,12 +49,16 @@
       <AdditionalIncludeDirectories>C:\OSGeo4W\include;C:\Archivos de programa\MySQL\MySQL Server 5.5\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>MSUDF_EXPORTS;_WINDLL;HAVE_DLOPEN;_CRT_SECURE_NO_DEPRECATE</PreprocessorDefinitions>
       <CompileAs>CompileAsC</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>MySpatialUDF.def</ModuleDefinitionFile>
       <AdditionalDependencies>proj.lib;libmysql.lib;geos_c_i.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\projectes\release-1600\lib;C:\Archivos de programa\MySQL\MySQL Server 5.5\lib</AdditionalLibraryDirectories>
+      <OptimizeReferences>false</OptimizeReferences>
+      <EnableCOMDATFolding>false</EnableCOMDATFolding>
+      <AssemblyDebug>true</AssemblyDebug>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -63,7 +67,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>C:\OSGeo4W\include;C:\Archivos de programa\MySQL\MySQL Server 5.5\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\OSGeo4W\include;C:\Archivos de programa\MariaDB 5.5\include\mysql</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>MSUDF_EXPORTS;_WINDLL;HAVE_DLOPEN;_CRT_SECURE_NO_DEPRECATE</PreprocessorDefinitions>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
@@ -76,9 +80,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="GeometryUtils.h" />
     <ClInclude Include="MySpatialUDF.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GeometryUtils.cpp" />
     <ClCompile Include="MySpatialUDF.cpp" />
   </ItemGroup>
   <ItemGroup>

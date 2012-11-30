@@ -165,6 +165,7 @@ MSUDF_API long long msudf_within(UDF_INIT *initid,UDF_ARGS *args,char *is_null, 
 		char *buf;
 	} transform_params;
 
-	int msduf_getInt(const unsigned char *buf);
+	int msudf_getInt(const unsigned char *buf);
+	GEOSGeom msudf_getGeometry(unsigned char *buf,unsigned int length);
 
 #endif

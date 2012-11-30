@@ -176,6 +176,8 @@ my_bool msudf_centroid_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 {
 	DEBUG("msudf_centroid_init");
 
+	initGEOS(gu_debug,gu_debug);
+
 	if (args->arg_count != 1) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
@@ -183,6 +185,8 @@ my_bool msudf_centroid_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 		strcpy(message,"Wrong type on parameter #1");
 		return 1;
 	} 
+
+	args->arg_type[0] = STRING_RESULT;
 
 	DEBUG("msudf_centroid_init OK1");
 	initid->max_length= 0xFFFFFF;
@@ -202,6 +206,20 @@ void msudf_centroid_deinit(UDF_INIT *initid)
 	DEBUG("msudf_centroid_deinit OK");
 }
 
+GEOSGeom msudf_getGeometry(unsigned char *buf,unsigned int length)
+{
+	int srid;
+	GEOSGeom geom;
+
+	geom = GEOSGeomFromWKB_buf(buf + 4,length - 4);
+	if (geom != NULL) {
+		srid = msudf_getInt(buf);
+		GEOSSetSRID(geom,srid);
+	}
+	return geom;
+}
+
+
 char *msudf_centroid(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	unsigned long *length, char *is_null, char *error)
 {
@@ -211,9 +229,8 @@ char *msudf_centroid(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 
 	DEBUG("msudf_centroid");
 
-	wkb = (unsigned char *) (args->args[0]);
-	geom1 = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
 	wkb = NULL;
+	geom1 = msudf_getGeometry((unsigned char *)args->args[0],args->lengths[0]);
 	
 	if (geom1 == NULL) {
 		strcpy(error,"Invalid geometry.");
@@ -508,7 +525,7 @@ char *msudf_difference(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 
 	wkb = (unsigned char *) (args->args[0]);
 	geomFirst = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
-	sridFirst = msduf_getInt(wkb);
+	sridFirst = msudf_getInt(wkb);
 	wkb = NULL;
 	if (geomFirst == NULL) {
 		strcpy(error,"Invalid geometry on first parameter.");
@@ -518,7 +535,7 @@ char *msudf_difference(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 
 	wkb = (unsigned char *) (args->args[1]);
 	geomSecond = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[1] - 4);
-	sridSecond = msduf_getInt(wkb);
+	sridSecond = msudf_getInt(wkb);
 	wkb = NULL;
 	if (geomSecond == NULL) {
 		strcpy(error,"Invalid geometry on second parameter.");
@@ -664,7 +681,7 @@ char *msudf_intersection(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 
 	wkb = (unsigned char *) (args->args[0]);
 	geomFirst = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
-	sridFirst = msduf_getInt(wkb);
+	sridFirst = msudf_getInt(wkb);
 	wkb = NULL;
 	if (geomFirst == NULL) {
 		strcpy(error,"Invalid geometry on first parameter.");
@@ -674,7 +691,7 @@ char *msudf_intersection(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 
 	wkb = (unsigned char *) (args->args[1]);
 	geomSecond = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[1] - 4);
-	sridSecond = msduf_getInt(wkb);
+	sridSecond = msudf_getInt(wkb);
 	wkb = NULL;
 	if (geomSecond == NULL) {
 		strcpy(error,"Invalid geometry on second parameter.");
@@ -1140,7 +1157,7 @@ my_bool msudf_transform_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	return 0;
 }
 
-int msduf_getInt(const unsigned char *buf)
+int msudf_getInt(const unsigned char *buf)
 {
 	int result;
     unsigned char *p = (unsigned char *)&result;
@@ -1170,7 +1187,7 @@ char *msudf_transform(UDF_INIT *initid, UDF_ARGS *args, char *buf,
 	DEBUG("msudf_transform");
 	wkb = (unsigned char *) (args->args[0]);
 	g1 = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
-	srid_src = msduf_getInt(wkb);
+	srid_src = msudf_getInt(wkb);
 	wkb = NULL;
 
 	DEBUG("srid_src: %d",srid_src);
@@ -1179,7 +1196,7 @@ char *msudf_transform(UDF_INIT *initid, UDF_ARGS *args, char *buf,
 		params->srid_src = srid_src;
 	}
 
-	srid_dst = msduf_getInt((unsigned char *) args->args[2]);
+	srid_dst = msudf_getInt((unsigned char *) args->args[2]);
 	DEBUG("srid_dst: %d",srid_dst);
 	if ((params->pj_dst == NULL) || (params->srid_dst != srid_dst)) {
 		params->pj_dst = pj_init_plus(args->args[3]);
@@ -1274,7 +1291,7 @@ char *msudf_symDifference(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 
 	wkb = (unsigned char *) (args->args[0]);
 	geomFirst = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
-	sridFirst = msduf_getInt(wkb);
+	sridFirst = msudf_getInt(wkb);
 	wkb = NULL;
 	if (geomFirst == NULL) {
 		strcpy(error,"Invalid geometry on first parameter.");
@@ -1284,7 +1301,7 @@ char *msudf_symDifference(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 
 	wkb = (unsigned char *) (args->args[1]);
 	geomSecond = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[1] - 4);
-	sridSecond = msduf_getInt(wkb);
+	sridSecond = msudf_getInt(wkb);
 	wkb = NULL;
 	if (geomSecond == NULL) {
 		strcpy(error,"Invalid geometry on second parameter.");
@@ -1834,7 +1851,7 @@ char *msudf_union(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 
 	wkb = (unsigned char *) (args->args[0]);
 	geomFirst = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[0] - 4);
-	sridFirst = msduf_getInt(wkb);
+	sridFirst = msudf_getInt(wkb);
 	wkb = NULL;
 	if (geomFirst == NULL) {
 		strcpy(error,"Invalid geometry on first parameter.");
@@ -1844,7 +1861,7 @@ char *msudf_union(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 
 	wkb = (unsigned char *) (args->args[1]);
 	geomSecond = GEOSGeomFromWKB_buf(wkb + 4,args->lengths[1] - 4);
-	sridSecond = msduf_getInt(wkb);
+	sridSecond = msudf_getInt(wkb);
 	wkb = NULL;
 	if (geomSecond == NULL) {
 		strcpy(error,"Invalid geometry on second parameter.");

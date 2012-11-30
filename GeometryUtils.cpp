@@ -12,7 +12,12 @@
 void gu_debug(const char *fmt, ...) {
 		va_list ap;
 
-		FILE * fd = fopen("C:\\log.txt","a+" );
+		FILE * fd = fopen("C:\\temp\\log.txt","a+" );
+
+		if (fd == NULL) {
+			printf ("Error opening file: %s\n",strerror(errno));
+			exit(errno);
+		}
 
 		fprintf( fd, "DEBUG: ");
 

@@ -7,6 +7,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <errno.h>
+
 
 #include <proj_api.h>
 #include <geos_c.h>

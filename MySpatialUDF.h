@@ -163,9 +163,11 @@ MSUDF_API long long msudf_within(UDF_INIT *initid,UDF_ARGS *args,char *is_null, 
 		projPJ pj_src, pj_dst;
 		int srid_src, srid_dst;
 		char *buf;
-	} transform_params;
+	} msudf_params;
 
 	int msudf_getInt(const unsigned char *buf);
 	GEOSGeom msudf_getGeometry(unsigned char *buf,unsigned int length);
-
+	char *msudf_returnGeometry(UDF_INIT *initid,unsigned long* length,GEOSGeom geom);
+	void msudf_init(UDF_INIT *initid);
+	void msudf_deinit(UDF_INIT *initid);
 #endif

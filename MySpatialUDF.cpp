@@ -110,11 +110,9 @@ my_bool msudf_boundary_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 1) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
 	} 
-
+	
+	args->arg_type[0] = STRING_RESULT;
 	initid->max_length= 0xFFFFFF;
 	msudf_init(initid);
 	return 0;
@@ -159,24 +157,15 @@ my_bool msudf_buffer_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 {
 	DEBUG("msudf_buffer_init");
 
-	// args->arg_type[1] = REAL_RESULT;
-
 	if (args->arg_count < 2 || args->arg_count > 3 ) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
-	} else if (args->arg_type[1] != REAL_RESULT) {
-		strcpy(message,"Wrong type on parameter #2");
-		return 1;
 	}
 
-
-
-	if (args->arg_count > 2 && args->arg_type[2] != INT_RESULT) {
-		strcpy(message,"Wrong type on parameter #3");
-		return 1;
+	args->arg_type[0] = STRING_RESULT;
+	args->arg_type[1] = REAL_RESULT;
+	if (args->arg_count > 2) {
+		args->arg_type[2] = INT_RESULT;
 	};
 	
 	initid->max_length= 0xFFFFFF;
@@ -237,11 +226,9 @@ my_bool msudf_centroid_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 1) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
 	} 
-
+	
+	args->arg_type[0] = STRING_RESULT;
 	initid->max_length= 0xFFFFFF;
 	msudf_init(initid);
 	return 0;
@@ -289,14 +276,9 @@ my_bool msudf_contains_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 2) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
-	} else if (args->arg_type[1] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #2");
-		return 1;
-	}
-	
+	} 
+	args->arg_type[0] = STRING_RESULT;
+	args->arg_type[1] = STRING_RESULT;
 	msudf_init(initid);
 	return 0;
 }
@@ -346,11 +328,9 @@ my_bool msudf_convexHull_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 1) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
 	} 
-
+	
+	args->arg_type[0] = STRING_RESULT;
 	initid->max_length= 0xFFFFFF;
 	msudf_init(initid);
 	return 0;
@@ -398,14 +378,9 @@ my_bool msudf_crosses_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 2) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
-	} else if (args->arg_type[1] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #2");
-		return 1;
-	}
-	
+	} 
+	args->arg_type[0] = STRING_RESULT;
+	args->arg_type[1] = STRING_RESULT;
 	msudf_init(initid);
 	return 0;
 }
@@ -455,14 +430,10 @@ my_bool msudf_difference_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 2 ) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
-	} else if (args->arg_type[1] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #2");
-		return 1;
-	}
-
+	} 
+	
+	args->arg_type[0] = STRING_RESULT;
+	args->arg_type[1] = STRING_RESULT;
 	initid->max_length= 0xFFFFFF;
 	msudf_init(initid);
 	return 0;
@@ -520,14 +491,9 @@ my_bool msudf_disjoint_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 2) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
-	} else if (args->arg_type[1] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #2");
-		return 1;
-	}
-	
+	} 
+	args->arg_type[0] = STRING_RESULT;
+	args->arg_type[1] = STRING_RESULT;
 	msudf_init(initid);
 	return 0;
 }
@@ -577,14 +543,10 @@ my_bool msudf_intersection_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 2 ) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
-	} else if (args->arg_type[1] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #2");
-		return 1;
-	}
-
+	} 
+	
+	args->arg_type[0] = STRING_RESULT;
+	args->arg_type[1] = STRING_RESULT;
 	initid->max_length= 0xFFFFFF;
 	msudf_init(initid);
 	return 0;
@@ -642,14 +604,9 @@ my_bool msudf_intersects_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 2) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
-	} else if (args->arg_type[1] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #2");
-		return 1;
-	}
-	
+	} 
+	args->arg_type[0] = STRING_RESULT;
+	args->arg_type[1] = STRING_RESULT;
 	msudf_init(initid);
 	return 0;
 }
@@ -699,11 +656,9 @@ my_bool msudf_isEmpty_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 1) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
 	} 
-
+	
+	args->arg_type[0] = STRING_RESULT;
 	msudf_init(initid);
 	return 0;
 }
@@ -746,11 +701,9 @@ my_bool msudf_isSimple_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 1) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
 	} 
-
+	
+	args->arg_type[0] = STRING_RESULT;
 	msudf_init(initid);
 	return 0;
 }
@@ -793,11 +746,9 @@ my_bool msudf_isRing_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 1) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
 	} 
-
+	
+	args->arg_type[0] = STRING_RESULT;
 	msudf_init(initid);
 	return 0;
 }
@@ -840,11 +791,9 @@ my_bool msudf_isValid_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 1) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
 	} 
-
+	
+	args->arg_type[0] = STRING_RESULT;
 	msudf_init(initid);
 	return 0;
 }
@@ -887,14 +836,9 @@ my_bool msudf_overlaps_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 2) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
-	} else if (args->arg_type[1] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #2");
-		return 1;
-	}
-	
+	} 
+	args->arg_type[0] = STRING_RESULT;
+	args->arg_type[1] = STRING_RESULT;
 	msudf_init(initid);
 	return 0;
 }
@@ -944,14 +888,9 @@ my_bool msudf_touches_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 2) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
-	} else if (args->arg_type[1] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #2");
-		return 1;
-	}
-	
+	} 
+	args->arg_type[0] = STRING_RESULT;
+	args->arg_type[1] = STRING_RESULT;
 	msudf_init(initid);
 	return 0;
 }
@@ -1003,20 +942,12 @@ my_bool msudf_transform_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 4) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
-	} else if (args->arg_type[1] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #2");
-		return 1;
-	} else if(args->arg_type[2] != INT_RESULT) {
-		strcpy(message,"Wrong type on parameter #3");
-		return 1;
-	} else if(args->arg_type[3] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #4");
-		return 1;
-	}
- 
+	} 
+
+	args->arg_type[0] = STRING_RESULT;
+	args->arg_type[1] = STRING_RESULT;
+	args->arg_type[2] = INT_RESULT;
+	args->arg_type[3] = STRING_RESULT;
 	msudf_init(initid);
 	return 0;
 }
@@ -1094,14 +1025,10 @@ my_bool msudf_symDifference_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 2 ) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
-	} else if (args->arg_type[1] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #2");
-		return 1;
-	}
-
+	} 
+	
+	args->arg_type[0] = STRING_RESULT;
+	args->arg_type[1] = STRING_RESULT;
 	initid->max_length= 0xFFFFFF;
 	msudf_init(initid);
 	return 0;
@@ -1159,14 +1086,9 @@ my_bool msudf_simplify_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 2) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
-	} else if (args->arg_type[1] != REAL_RESULT) {
-		strcpy(message,"Wrong type on parameter #2");
-		return 1;
 	}
-	
+	args->arg_type[0] = STRING_RESULT;
+	args->arg_type[1] = REAL_RESULT;
 	initid->max_length= 0xFFFFFF;
 	msudf_init(initid);
 	return 0;
@@ -1217,14 +1139,9 @@ my_bool msudf_simplifyPreserveTopology_init(UDF_INIT *initid,UDF_ARGS *args,char
 	if (args->arg_count != 2) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
-	} else if (args->arg_type[1] != REAL_RESULT) {
-		strcpy(message,"Wrong type on parameter #2");
-		return 1;
 	}
-	
+	args->arg_type[0] = STRING_RESULT;
+	args->arg_type[1] = REAL_RESULT;
 	initid->max_length= 0xFFFFFF;
 	msudf_init(initid);
 	return 0;
@@ -1275,11 +1192,9 @@ my_bool msudf_lineMerge_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 1) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
 	} 
-
+	
+	args->arg_type[0] = STRING_RESULT;
 	initid->max_length= 0xFFFFFF;
 	msudf_init(initid);
 	return 0;
@@ -1290,7 +1205,6 @@ void msudf_lineMerge_deinit(UDF_INIT *initid)
 {
 	DEBUG("msudf_lineMerge_deinit");
 	msudf_deinit(initid);
-	DEBUG("msudf_lineMerge_deinit_OK");
 }
 
 char *msudf_lineMerge(UDF_INIT *initid,UDF_ARGS *args, char *buf,
@@ -1328,17 +1242,10 @@ my_bool msudf_lineSubstring_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 3) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
-	} else if (args->arg_type[1] != REAL_RESULT) {
-		strcpy(message,"Wrong type on parameter #2");
-		return 1;
-	} else if (args->arg_type[2] != REAL_RESULT) {
-		strcpy(message,"Wrong type on parameter #3");
-		return 1;
 	}
-	
+	args->arg_type[0] = STRING_RESULT;
+	args->arg_type[1] = REAL_RESULT;
+	args->arg_type[2] = REAL_RESULT;
 	initid->max_length= 0xFFFFFF;
 	msudf_init(initid);
 	return 0;
@@ -1391,11 +1298,9 @@ my_bool msudf_pointOnSurface_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 1) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
 	} 
-
+	
+	args->arg_type[0] = STRING_RESULT;
 	initid->max_length= 0xFFFFFF;
 	msudf_init(initid);
 	return 0;
@@ -1443,11 +1348,9 @@ my_bool msudf_reverse_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 1) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
 	} 
-
+	
+	args->arg_type[0] = STRING_RESULT;
 	initid->max_length= 0xFFFFFF;
 	msudf_init(initid);
 	return 0;
@@ -1495,14 +1398,10 @@ my_bool msudf_union_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 2 ) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
-	} else if (args->arg_type[1] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #2");
-		return 1;
-	}
-
+	} 
+	
+	args->arg_type[0] = STRING_RESULT;
+	args->arg_type[1] = STRING_RESULT;
 	initid->max_length= 0xFFFFFF;
 	msudf_init(initid);
 	return 0;
@@ -1537,14 +1436,9 @@ char *msudf_union(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 		return 0;
 	}
 
-	DEBUG("geomFirst srid: %d",GEOSGetSRID(geomFirst));
-
-
 	geomResult = GEOSUnion(geomFirst,geomSecond);
 	GEOSSetSRID(geomResult,GEOSGetSRID(geomFirst));
 	
-	DEBUG("geomResult srid: %d",GEOSGetSRID(geomResult));
-
 	GEOSGeom_destroy(geomFirst);
 	GEOSGeom_destroy(geomSecond);
 
@@ -1565,14 +1459,9 @@ my_bool msudf_within_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
 	if (args->arg_count != 2) {
 		strcpy(message,"Wrong # arguments");
 		return 1;
-	} else if (args->arg_type[0] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #1");
-		return 1;
-	} else if (args->arg_type[1] != STRING_RESULT) {
-		strcpy(message,"Wrong type on parameter #2");
-		return 1;
-	}
-	
+	} 
+	args->arg_type[0] = STRING_RESULT;
+	args->arg_type[1] = STRING_RESULT;
 	msudf_init(initid);
 	return 0;
 }

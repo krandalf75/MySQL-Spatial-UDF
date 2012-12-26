@@ -3952,6 +3952,6 @@ select CASE WHEN  ST_Union(geomfromtext('POINT( 2 2) ',4326),geomfromtext('POINT
 	THEN 'Test 11: Failed.' 
 	ELSE 'Test 11: OK.' END;
 
-select CASE WHEN  ST_Buffer(geomfromtext('POINT( 2 2) ',4326),2) != geomfromtext('MULTIPOINT(2 2,2 4)',4326)
+select CASE WHEN  ST_Buffer(geomfromtext('POINT (2 2)',4326),10,1) != geomfromtext('POLYGON((12 2,2.000000000000016 -8,-8 1.9999999999999676,1.9999999999999538 12,12 2))',4326)
 	THEN 'Test 12: Failed.' 
 	ELSE 'Test 12: OK.' END;

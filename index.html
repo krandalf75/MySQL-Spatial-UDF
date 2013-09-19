@@ -1,0 +1,242 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Mysql-spatial-udf by krandalf75</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Mysql-spatial-udf</h1>
+        <p>MySQL Spatial User Defined Functions</p>
+        <p class="view"><a href="https://github.com/krandalf75/MySQL-Spatial-UDF">View the Project on GitHub <small>krandalf75/MySQL-Spatial-UDF</small></a></p>
+        <ul>
+          <li><a href="https://github.com/krandalf75/MySQL-Spatial-UDF/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/krandalf75/MySQL-Spatial-UDF/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/krandalf75/MySQL-Spatial-UDF">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p><a href="https://drone.io/github.com/krandalf75/MySQL-Spatial-UDF/latest"><img src="https://drone.io/github.com/krandalf75/MySQL-Spatial-UDF/status.png" alt="Build Status"></a>
+<a href="https://drone.io/github.com/krandalf75/MySQL-Spatial-UDF/files">download</a></p>
+
+<h1>
+<a name="mysql-spatial-user-defined-functions" class="anchor" href="#mysql-spatial-user-defined-functions"><span class="octicon octicon-link"></span></a>MySQL Spatial User Defined Functions</h1>
+
+<p>This project add missing spatial functionality to MySQL through an UDF library. 
+At this time this library implements more than 20 functions not present on current MySQL database.</p>
+
+<h2>
+<a name="what-is-an-user-defined-function" class="anchor" href="#what-is-an-user-defined-function"><span class="octicon octicon-link"></span></a>What is an User Defined Function?</h2>
+
+<p>An User Defined Function (UDF) is a C/C++ library that extends the functionality 
+of a MySQL server by adding new functions that behaves just like a native (built-in) 
+MySQL functions like abs() or concat().</p>
+
+<h2>
+<a name="build-requirements" class="anchor" href="#build-requirements"><span class="octicon octicon-link"></span></a>Build requirements</h2>
+
+<p>The code is written in C and requires the following libraries:</p>
+
+<ul>
+<li><a href="http://trac.osgeo.org/proj">PROJ.4</a></li>
+<li><a href="http://trac.osgeo.org/geos">GEOS</a></li>
+</ul><h2>
+<a name="building" class="anchor" href="#building"><span class="octicon octicon-link"></span></a>Building</h2>
+
+<h3>
+<a name="on-unix" class="anchor" href="#on-unix"><span class="octicon octicon-link"></span></a>on UNIX</h3>
+
+<p>On Linux or similars systems you will need to invoke the command "cmake ." This command will resolve 
+dependences and generate an Makefile. After this a simple call to "make" will do the job. </p>
+
+<h3>
+<a name="on-windows" class="anchor" href="#on-windows"><span class="octicon octicon-link"></span></a>on WINDOWS</h3>
+
+<p>If you have an MSVC 2010 compiler you can use included MySpatialUDF.sln project.<br>
+Before, you must correct the paths to search library dependences. </p>
+
+<p>If you have another version of Visual Studio you will need to install cmake windows environment.
+cmake will build a Visual Studio Project with the version you needed and with all the library dependences solved.</p>
+
+<p>If you want use Cygwin you will also need cmake. In this case cmake will build a Makefile file that you can use with
+thie command make. </p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<h3>
+<a name="on-unix-or-cygwin" class="anchor" href="#on-unix-or-cygwin"><span class="octicon octicon-link"></span></a>on UNIX or Cygwin</h3>
+
+<p>If cmake detects the plugin MySQL's directory  the command "make -install" will copy the library to the correct folder.
+If not you can copy the library to this folder manually. Ensure that MySQL can execute this file and his library dependences.</p>
+
+<p>Execute script MySpatialUDF.sql as a mysql administrator.</p>
+
+<pre><code>WARNING !!
+This script drop and creates several tables and procedures in mysql schema.
+Ensure that you don't delete any table or procedure that is useful !!!!
+</code></pre>
+
+<h3>
+<a name="on-windows-1" class="anchor" href="#on-windows-1"><span class="octicon octicon-link"></span></a>on WINDOWS</h3>
+
+<p>Copy Release/MySpatialUDF.dll and dependent libraries to \lib\plugin</p>
+
+<p>Execute script MySpatialUDF.sql as a mysql administrator.</p>
+
+<pre><code>WARNING !!
+This script drop and creates several tables and procedures in mysql schema.
+Ensure that you don't delete any table or procedure that is useful !!!!
+</code></pre>
+
+<p>If you don't like write in mysql schema you can change the first line of the script.</p>
+
+<h2>
+<a name="current-function-list-support" class="anchor" href="#current-function-list-support"><span class="octicon octicon-link"></span></a>Current Function List Support</h2>
+
+<pre><code>+-------------------------------+--------+-------+
+| Function                      | native | msudf |
++-------------------------------+--------+-------+
+| ST_Area                       | Y      | N     |
+| ST_AsBinary                   | Y      | N     |
+| ST_AsText                     | Y      | N     |
+| ST_Boundary                   | N      | Y     |
+| ST_Buffer                     | N      | Y     |
+| ST_Centroid                   | N      | Y     |
+| ST_Contains                   | N      | Y     |
+| ST_ConvexHull                 | N      | Y     |
+| ST_Crosses                    | N      | Y     |
+| ST_Difference                 | N      | Y     |
+| ST_Dimension                  | Y      | N     |
+| ST_Disjoint                   | N      | Y     |
+| ST_EndPoint                   | Y      | N     |
+| ST_Envelope                   | Y      | N     |
+| ST_ExteriorRing               | Y      | N     |
+| ST_GeomFromText               | Y      | N     |
+| ST_GeomFromWKB                | Y      | N     |
+| ST_GeometryN                  | Y      | N     |
+| ST_GeometryType               | Y      | N     |
+| ST_InteriorRingN              | Y      | N     |
+| ST_Intersection               | N      | Y     |
+| ST_Intersects                 | N      | Y     |
+| ST_IsClosed                   | Y      | N     |
+| ST_IsEmpty                    | N      | Y     |
+| ST_IsRing                     | N      | Y     |
+| ST_IsSimple                   | N      | Y     |
+| ST_IsValid                    | N      | Y     |
+| ST_Length                     | Y      | N     |
+| ST_Length2D                   | Y      | N     |
+| ST_LineMerge                  | N      | Y     |
+| ST_Line_Substring             | N      | Y     |
+| ST_NumGeometries              | Y      | N     |
+| ST_NumInteriorRings           | Y      | N     |
+| ST_NumPoints                  | Y      | N     |
+| ST_Overlaps                   | N      | Y     |
+| ST_PointN                     | Y      | N     |
+| ST_PointOnSurface             | N      | Y     |
+| ST_Reverse                    | N      | Y     |
+| ST_SRID                       | Y      | N     |
+| ST_Simplify                   | N      | Y     |
+| ST_SimplifyPreserveTopology   | N      | Y     |
+| ST_SymDifference              | N      | Y     |
+| ST_Touches                    | N      | Y     |
+| ST_Transform                  | N      | Y     |
+| ST_Union                      | N      | Y     |
+| ST_Within                     | N      | Y     |
+| ST_X                          | Y      | N     |
+| ST_Y                          | Y      | N     |
++-------------------------------+--------+-------+
+</code></pre>
+
+<p>Note: Native functions don't have 'ST_' prefix.</p>
+
+<h2>
+<a name="sample-usage" class="anchor" href="#sample-usage"><span class="octicon octicon-link"></span></a>Sample Usage</h2>
+
+<p>You can load a table with GDAL tool ogr2ogr.</p>
+
+<p>After this check the SRID of the geometry is correct.</p>
+
+<pre><code>mysql&gt; select srid(geom) into @srid from geom_table limit 1;
+Query OK, 1 row affected (0.00 sec)
+
+mysql&gt; select @srid;
++-------+
+| @srid |
++-------+
+|  3395 |
++-------+
+1 row in set (0.00 sec)
+
+mysql&gt; select @srid;
++-------+
+| @srid |
++-------+
+|  3395 |
++-------+
+1 row in set (0.00 sec)
+
+mysql&gt; select auth_name,auth_srid,ref_sys_name from mysql.spatial_ref_sys where
+srid = @srid;
++-----------+-----------+-------------------------+
+| auth_name | auth_srid | ref_sys_name            |
++-----------+-----------+-------------------------+
+| epsg      |      3395 | WGS 84 / World Mercator |
++-----------+-----------+-------------------------+
+1 row in set (0.00 sec)
+</code></pre>
+
+<p>If it's wrong you can change the SRID value (without transform) with this update:</p>
+
+<pre><code>mysql&gt; update geom_table set geom = GeomFromWKB(aswkb(geom),3395); 
+</code></pre>
+
+<p>You can create another geometry with different projection with this sentence:</p>
+
+<pre><code>mysql&gt; alter table geom_table add column (geom2 geometry);
+Query OK, 1 row affected (0.13 sec)
+Records: 1  Duplicates: 0  Warnings: 0 
+
+mysql&gt; update test set geom2 = mysql.transform(geom,4326);
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1000  Changed: 1000  Warnings: 0
+</code></pre>
+
+<h2>
+<a name="copyright" class="anchor" href="#copyright"><span class="octicon octicon-link"></span></a>Copyright</h2>
+
+<p>Copyright (c) 2012, Albert Rovira. </p>
+
+<p>This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.</p>
+
+<p>This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.</p>
+
+<p>You should have received a copy of the GNU General Public License along 
+with this program (COPYING.txt).  If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/krandalf75">krandalf75</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>

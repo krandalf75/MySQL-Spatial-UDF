@@ -1,3 +1,7 @@
+[![Build Status](https://drone.io/github.com/krandalf75/MySQL-Spatial-UDF/status.png)](https://drone.io/github.com/krandalf75/MySQL-Spatial-UDF/latest)
+
+[Linux binary](https://drone.io/github.com/krandalf75/MySQL-Spatial-UDF/files/libMySpatialUDF.so)
+
 # MySQL Spatial User Defined Functions
 
 This project add missing spatial functionality to MySQL through an UDF library. 

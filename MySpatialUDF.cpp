@@ -139,15 +139,17 @@ char *msudf_boundary(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 		*is_null = 1;
 		return NULL;
 	}
-
+	
 	geom2 = GEOSBoundary(geom1);
-	GEOSSetSRID(geom2,GEOSGetSRID(geom1));
-	GEOSGeom_destroy(geom1);
+
 	if (geom2 != NULL) {
+		GEOSSetSRID(geom2,GEOSGetSRID(geom1));
 		result = msudf_returnGeometry(initid,length,geom2);
+		GEOSGeom_destroy(geom1);
 		GEOSGeom_destroy(geom2);
 		return result;
 	} else {
+		GEOSGeom_destroy(geom1);
 		*is_null = 1;
 		return NULL;
 	}
@@ -206,14 +208,15 @@ char *msudf_buffer(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	}
 
 	geom2 = GEOSBuffer(geom1,buffer,quadsegs);
-	GEOSSetSRID(geom2,GEOSGetSRID(geom1));
 
-	GEOSGeom_destroy(geom1);
 	if (geom2 != NULL) {
+        GEOSSetSRID(geom2,GEOSGetSRID(geom1));
 		result = msudf_returnGeometry(initid,length,geom2);
+		GEOSGeom_destroy(geom1);
 		GEOSGeom_destroy(geom2);
 		return result;
 	} else {
+		GEOSGeom_destroy(geom1);
 		*is_null = 1;
 		return NULL;
 	}
@@ -255,15 +258,17 @@ char *msudf_centroid(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 		*is_null = 1;
 		return NULL;
 	}
-
+	
 	geom2 = GEOSGetCentroid(geom1);
-	GEOSSetSRID(geom2,GEOSGetSRID(geom1));
-	GEOSGeom_destroy(geom1);
+
 	if (geom2 != NULL) {
+		GEOSSetSRID(geom2,GEOSGetSRID(geom1));
 		result = msudf_returnGeometry(initid,length,geom2);
+		GEOSGeom_destroy(geom1);
 		GEOSGeom_destroy(geom2);
 		return result;
 	} else {
+		GEOSGeom_destroy(geom1);
 		*is_null = 1;
 		return NULL;
 	}
@@ -357,15 +362,17 @@ char *msudf_convexHull(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 		*is_null = 1;
 		return NULL;
 	}
-
+	
 	geom2 = GEOSConvexHull(geom1);
-	GEOSSetSRID(geom2,GEOSGetSRID(geom1));
-	GEOSGeom_destroy(geom1);
+
 	if (geom2 != NULL) {
+		GEOSSetSRID(geom2,GEOSGetSRID(geom1));
 		result = msudf_returnGeometry(initid,length,geom2);
+		GEOSGeom_destroy(geom1);
 		GEOSGeom_destroy(geom2);
 		return result;
 	} else {
+		GEOSGeom_destroy(geom1);
 		*is_null = 1;
 		return NULL;
 	}
@@ -469,16 +476,17 @@ char *msudf_difference(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	}
 
 	geomResult = GEOSDifference(geomFirst,geomSecond);
-	GEOSSetSRID(geomResult,GEOSGetSRID(geomFirst));
-	
-	GEOSGeom_destroy(geomFirst);
-	GEOSGeom_destroy(geomSecond);
 
 	if (geomResult!= NULL) {
+		GEOSSetSRID(geomResult,GEOSGetSRID(geomFirst));
 		result = msudf_returnGeometry(initid,length,geomResult);
+		GEOSGeom_destroy(geomFirst);
+		GEOSGeom_destroy(geomSecond);
 		GEOSGeom_destroy(geomResult);
 		return result;
 	} else {
+		GEOSGeom_destroy(geomFirst);
+		GEOSGeom_destroy(geomSecond);
 		*is_null = 1;
 		return NULL;
 	}
@@ -582,16 +590,17 @@ char *msudf_intersection(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	}
 
 	geomResult = GEOSIntersection(geomFirst,geomSecond);
-	GEOSSetSRID(geomResult,GEOSGetSRID(geomFirst));
-	
-	GEOSGeom_destroy(geomFirst);
-	GEOSGeom_destroy(geomSecond);
 
 	if (geomResult!= NULL) {
+		GEOSSetSRID(geomResult,GEOSGetSRID(geomFirst));
 		result = msudf_returnGeometry(initid,length,geomResult);
+		GEOSGeom_destroy(geomFirst);
+		GEOSGeom_destroy(geomSecond);
 		GEOSGeom_destroy(geomResult);
 		return result;
 	} else {
+		GEOSGeom_destroy(geomFirst);
+		GEOSGeom_destroy(geomSecond);
 		*is_null = 1;
 		return NULL;
 	}
@@ -1064,16 +1073,17 @@ char *msudf_symDifference(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	}
 
 	geomResult = GEOSSymDifference(geomFirst,geomSecond);
-	GEOSSetSRID(geomResult,GEOSGetSRID(geomFirst));
-	
-	GEOSGeom_destroy(geomFirst);
-	GEOSGeom_destroy(geomSecond);
 
 	if (geomResult!= NULL) {
+		GEOSSetSRID(geomResult,GEOSGetSRID(geomFirst));
 		result = msudf_returnGeometry(initid,length,geomResult);
+		GEOSGeom_destroy(geomFirst);
+		GEOSGeom_destroy(geomSecond);
 		GEOSGeom_destroy(geomResult);
 		return result;
 	} else {
+		GEOSGeom_destroy(geomFirst);
+		GEOSGeom_destroy(geomSecond);
 		*is_null = 1;
 		return NULL;
 	}
@@ -1119,14 +1129,15 @@ char *msudf_simplify(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	tolerance = *(double*) args->args[1] ;
 
 	geom2 = GEOSSimplify(geom1,tolerance);
-	GEOSSetSRID(geom2,GEOSGetSRID(geom1));
 
-	GEOSGeom_destroy(geom1);
 	if (geom2 != NULL) {
+		GEOSSetSRID(geom2,GEOSGetSRID(geom1));
 		result = msudf_returnGeometry(initid,length,geom2);
+		GEOSGeom_destroy(geom1);
 		GEOSGeom_destroy(geom2);
 		return result;
 	} else {
+		GEOSGeom_destroy(geom1);
 		*is_null = 1;
 		return NULL;
 	}
@@ -1172,14 +1183,15 @@ char *msudf_simplifyPreserveTopology(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	tolerance = *(double*) args->args[1] ;
 
 	geom2 = GEOSTopologyPreserveSimplify(geom1,tolerance);
-	GEOSSetSRID(geom2,GEOSGetSRID(geom1));
 
-	GEOSGeom_destroy(geom1);
 	if (geom2 != NULL) {
+		GEOSSetSRID(geom2,GEOSGetSRID(geom1));
 		result = msudf_returnGeometry(initid,length,geom2);
+		GEOSGeom_destroy(geom1);
 		GEOSGeom_destroy(geom2);
 		return result;
 	} else {
+		GEOSGeom_destroy(geom1);
 		*is_null = 1;
 		return NULL;
 	}
@@ -1221,15 +1233,17 @@ char *msudf_lineMerge(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 		*is_null = 1;
 		return NULL;
 	}
-
+	
 	geom2 = GEOSLineMerge(geom1);
-	GEOSSetSRID(geom2,GEOSGetSRID(geom1));
-	GEOSGeom_destroy(geom1);
+
 	if (geom2 != NULL) {
+		GEOSSetSRID(geom2,GEOSGetSRID(geom1));
 		result = msudf_returnGeometry(initid,length,geom2);
+		GEOSGeom_destroy(geom1);
 		GEOSGeom_destroy(geom2);
 		return result;
 	} else {
+		GEOSGeom_destroy(geom1);
 		*is_null = 1;
 		return NULL;
 	}
@@ -1278,14 +1292,15 @@ char *msudf_lineSubstring(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	end = *(double*) args->args[2] ;
 
 	geom2 = gu_substringLineGeom(geom1,start,end);
-	GEOSSetSRID(geom2,GEOSGetSRID(geom1));
 
-	GEOSGeom_destroy(geom1);
 	if (geom2 != NULL) {
+		GEOSSetSRID(geom2,GEOSGetSRID(geom1));
 		result = msudf_returnGeometry(initid,length,geom2);
+		GEOSGeom_destroy(geom1);
 		GEOSGeom_destroy(geom2);
 		return result;
 	} else {
+		GEOSGeom_destroy(geom1);
 		*is_null = 1;
 		return NULL;
 	}
@@ -1327,15 +1342,17 @@ char *msudf_pointOnSurface(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 		*is_null = 1;
 		return NULL;
 	}
-
+	
 	geom2 = GEOSPointOnSurface(geom1);
-	GEOSSetSRID(geom2,GEOSGetSRID(geom1));
-	GEOSGeom_destroy(geom1);
+
 	if (geom2 != NULL) {
+		GEOSSetSRID(geom2,GEOSGetSRID(geom1));
 		result = msudf_returnGeometry(initid,length,geom2);
+		GEOSGeom_destroy(geom1);
 		GEOSGeom_destroy(geom2);
 		return result;
 	} else {
+		GEOSGeom_destroy(geom1);
 		*is_null = 1;
 		return NULL;
 	}
@@ -1379,13 +1396,15 @@ char *msudf_reverse(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	}
 
 	geom2 = gu_reverseGeom(geom1);
-	GEOSSetSRID(geom2,GEOSGetSRID(geom1));
-	GEOSGeom_destroy(geom1);
+
 	if (geom2 != NULL) {
+		GEOSSetSRID(geom2,GEOSGetSRID(geom1));
 		result = msudf_returnGeometry(initid,length,geom2);
+		GEOSGeom_destroy(geom1);
 		GEOSGeom_destroy(geom2);
 		return result;
 	} else {
+		GEOSGeom_destroy(geom1);
 		*is_null = 1;
 		return NULL;
 	}
@@ -1437,16 +1456,17 @@ char *msudf_union(UDF_INIT *initid,UDF_ARGS *args, char *buf,
 	}
 
 	geomResult = GEOSUnion(geomFirst,geomSecond);
-	GEOSSetSRID(geomResult,GEOSGetSRID(geomFirst));
-	
-	GEOSGeom_destroy(geomFirst);
-	GEOSGeom_destroy(geomSecond);
 
 	if (geomResult!= NULL) {
+		GEOSSetSRID(geomResult,GEOSGetSRID(geomFirst));
 		result = msudf_returnGeometry(initid,length,geomResult);
+		GEOSGeom_destroy(geomFirst);
+		GEOSGeom_destroy(geomSecond);
 		GEOSGeom_destroy(geomResult);
 		return result;
 	} else {
+		GEOSGeom_destroy(geomFirst);
+		GEOSGeom_destroy(geomSecond);
 		*is_null = 1;
 		return NULL;
 	}
@@ -1478,20 +1498,20 @@ long long msudf_within(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *erro
 
 	DEBUG("msudf_within");
 
-	geom1 = msudf_getGeometry((unsigned char *)args->args[0],args->lengths[0]);		
+	geom1 = msudf_getGeometry((unsigned char *)args->args[0],args->lengths[0]);	
 	if (geom1 == NULL) {
 		strcpy(error,"Invalid geometry.");
 		*is_null = 1;
 		return 0;
 	}
-	
+
 	geom2 = msudf_getGeometry((unsigned char *)args->args[1],args->lengths[1]);	
 	if (geom2 == NULL) {
 		strcpy(error,"Invalid geometry.");
 		*is_null = 1;
 		return 0;
 	}
-		
+	
 	result = GEOSWithin(geom1,geom2);
 	if (geom1 != NULL) GEOSGeom_destroy(geom1);
 	if (geom2 != NULL) GEOSGeom_destroy(geom2);

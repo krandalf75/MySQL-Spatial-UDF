@@ -1,0 +1,3 @@
+		} else if (args->arg_type[%index%] != %type%) {
+			strcpy(message,"Wrong type on parameter #%index%");
+			return 1;

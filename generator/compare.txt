@@ -1,0 +1,51 @@
+my_bool %name%_init(UDF_INIT *initid,UDF_ARGS *args,char *message)
+{
+	DEBUG("%name%_init");
+	
+	if (args->arg_count != 2) {
+		strcpy(message,"Wrong # arguments");
+		return 1;
+	} 
+	args->arg_type[0] = STRING_RESULT;
+	args->arg_type[1] = STRING_RESULT;
+	msudf_init(initid);
+	return 0;
+}
+
+void %name%_deinit(UDF_INIT *initid)
+{
+	msudf_deinit(initid);
+}
+
+long long %name%(UDF_INIT *initid,UDF_ARGS *args,char *is_null, char *error)
+{
+	GEOSGeom geom1,geom2;
+	long long result;
+
+	DEBUG("%name%");
+
+	geom1 = msudf_getGeometry((unsigned char *)args->args[0],args->lengths[0]);		
+	if (geom1 == NULL) {
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return 0;
+	}
+	
+	geom2 = msudf_getGeometry((unsigned char *)args->args[1],args->lengths[1]);	
+	if (geom2 == NULL) {
+		strcpy(error,"Invalid geometry.");
+		*is_null = 1;
+		return 0;
+	}
+		
+	result = %call%(geom1,geom2);
+	if (geom1 != NULL) GEOSGeom_destroy(geom1);
+	if (geom2 != NULL) GEOSGeom_destroy(geom2);
+	
+	if (result >1) {
+		*is_null = 1;
+		return 0;
+	} else {
+		return result;
+	}
+}

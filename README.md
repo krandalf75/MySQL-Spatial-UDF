@@ -127,6 +127,66 @@ If you don't like write in mysql schema you can change the first line of the scr
 Note: Native functions don't have 'ST_' prefix.
 
 
+
+
+## Current Function List Support vs Mysql 5.6
+
+    +-------------------------------+--------+-------+
+    | Function                      | native | msudf |
+    +-------------------------------+--------+-------+
+    | ST_Area                       | Y      | N     |
+    | ST_AsBinary                   | Y      | N     |
+    | ST_AsText                     | Y      | N     |
+    | ST_Boundary                   | N      | Y     |
+    | ST_Buffer                     | Y      | Y     |
+    | ST_Centroid                   | Y      | Y     |
+    | ST_Contains                   | Y      | Y     |
+    | ST_ConvexHull                 | N      | Y     |
+    | ST_Crosses                    | Y      | Y     |
+    | ST_Difference                 | Y      | Y     |
+    | ST_Dimension                  | Y      | N     |
+    | ST_Disjoint                   | Y      | Y     |
+    | ST_EndPoint                   | Y      | N     |
+    | ST_Envelope                   | Y      | N     |
+    | ST_ExteriorRing               | Y      | N     |
+    | ST_GeomFromText               | Y      | N     |
+    | ST_GeomFromWKB                | Y      | N     |
+    | ST_GeometryN                  | Y      | N     |
+    | ST_GeometryType               | Y      | N     |
+    | ST_InteriorRingN              | Y      | N     |
+    | ST_Intersection               | Y      | Y     |
+    | ST_Intersects                 | Y      | Y     |
+    | ST_IsClosed                   | Y      | N     |
+    | ST_IsEmpty                    | Y      | Y     |
+    | ST_IsRing                     | N      | Y     |
+    | ST_IsSimple                   | Y      | Y     |
+    | ST_IsValid                    | N      | Y     |
+    | ST_Length                     | Y      | N     |
+    | ST_Length2D                   | Y      | N     |
+    | ST_LineMerge                  | N      | Y     |
+    | ST_Line_Substring             | N      | Y     |
+    | ST_NumGeometries              | Y      | N     |
+    | ST_NumInteriorRings           | Y      | N     |
+    | ST_NumPoints                  | Y      | N     |
+    | ST_Overlaps                   | Y      | Y     |
+    | ST_PointN                     | Y      | N     |
+    | ST_PointOnSurface             | N      | Y     |
+    | ST_Reverse                    | N      | Y     |
+    | ST_SRID                       | Y      | N     |
+    | ST_Simplify                   | N      | Y     |
+    | ST_SimplifyPreserveTopology   | N      | Y     |
+    | ST_SymDifference              | Y      | Y     |
+    | ST_Touches                    | Y      | Y     |
+    | ST_Transform                  | N      | Y     |
+    | ST_Union                      | Y      | Y     |
+    | ST_Within                     | Y      | Y     |
+    | ST_X                          | Y      | N     |
+    | ST_Y                          | Y      | N     |
+    +-------------------------------+--------+-------+
+
+Note: Native functions have 'ST_' prefix.
+
+
 ## Sample Usage
 
 You can load a table with GDAL tool ogr2ogr.
